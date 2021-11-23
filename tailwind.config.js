@@ -1,5 +1,9 @@
 module.exports = {
   theme: {
+    backgroundColor: theme => ({
+      ...theme('colors'),
+      'primary': '#0e0e0e'
+    }),
     extend: {
       colors: {
         'accent-1': '#FAFAFA',
@@ -7,6 +11,9 @@ module.exports = {
         'accent-7': '#333',
         success: '#0070f3',
         cyan: '#79FFE1',
+        'primary': '#0e0e0e',
+        pink: '#f64a8a',
+        'code-grey': '#1f2937'
       },
       spacing: {
         28: '7rem',
@@ -28,5 +35,11 @@ module.exports = {
         medium: '0 8px 30px rgba(0, 0, 0, 0.12)',
       },
     },
-  }
+  },
+  variants: {
+    extend: {
+      textDecorationPlugin: ['dark', 'hover', 'responsive'],
+    },
+  },
+  plugins: [require('@downwindcss/text-decoration')],
 }

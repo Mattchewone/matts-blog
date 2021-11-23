@@ -18,6 +18,18 @@ export default {
       }
     },
     {
+      name: "excerpt",
+      description:
+        "Write a short pararaph of this post (For SEO Purposes)",
+      title: "Excerpt",
+      rows: 5,
+      type: "text",
+      validation: Rule =>
+        Rule.max(160).error(
+          "SEO descriptions are usually better when its below 160"
+        )
+    },
+    {
       name: 'author',
       title: 'Author',
       type: 'reference',
