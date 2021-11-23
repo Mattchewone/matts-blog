@@ -1034,6 +1034,7 @@
 "@sanity/code-input@^2.22.0":
   version "2.22.0"
   resolved "https://registry.yarnpkg.com/@sanity/code-input/-/code-input-2.22.0.tgz#94eec8c11010e4b9c8f0bdee999e4297802e2760"
+  integrity sha512-ExRHZsfzwWtrcpb3Kz3dkXXziSa6Vb4ADnwFf7yRo2/wu9XLrcl3Fh4J+Z4n+0Ecy3zbjnE2tgFbkBSRFsYufg==
   dependencies:
     "@reach/auto-id" "^0.13.2"
     "@sanity/base" "2.22.0"
