@@ -7,11 +7,10 @@ export default function HeroPost({
   coverImage,
   date,
   excerpt,
-  author,
   slug,
 }) {
   return (
-    <section>
+    <section className="max-w-6xl mx-auto">
       <div className="mb-8 md:mb-16">
         <CoverImage slug={slug} imageObject={coverImage} title={title} url={coverImage} />
       </div>

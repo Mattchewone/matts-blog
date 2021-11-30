@@ -14,6 +14,14 @@ export default {
       type: 'blockContent'
     },
     {
+      name: 'metaImage',
+      title: 'Image',
+      type: 'image',
+      options: {
+        hotspot: true
+      }
+    },
+    {
       name: 'posts',
       title: 'Posts',
       type: 'array',

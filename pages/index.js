@@ -9,7 +9,7 @@ import Head from 'next/head'
 export default function Index({ content, preview }) {
   return (
     <>
-      <Layout preview={preview}>
+      <Layout preview={preview} metaImage={content.metaImage}>
         <Head>
           <title>Matt Chaffe</title>
         </Head>

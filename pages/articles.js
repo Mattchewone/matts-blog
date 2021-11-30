@@ -6,12 +6,12 @@ import Layout from '../components/layout'
 import { getAllPostsForHome } from '../lib/api'
 import Head from 'next/head'
 
-export default function Index({ allPosts, preview }) {
+export default function Index({ allPosts, preview, metaImage }) {
   const heroPost = allPosts[0]
   const morePosts = allPosts.slice(1)
   return (
     <>
-      <Layout preview={preview}>
+      <Layout preview={preview} metaImage={metaImage}>
         <Head>
           <title>Articles | Matt Chaffe</title>
         </Head>
@@ -35,9 +35,10 @@ export default function Index({ allPosts, preview }) {
 }
 
 export async function getStaticProps({ preview = false }) {
-  const allPosts = await getAllPostsForHome(preview)
+  const { allPosts, metaImage } = await getAllPostsForHome(preview)
+
   return {
-    props: { allPosts, preview },
+    props: { allPosts, preview, metaImage },
     revalidate: 1
   }
 }
