@@ -13,7 +13,8 @@ module.exports = {
         cyan: '#79FFE1',
         'primary': '#0e0e0e',
         pink: '#f64a8a',
-        'code-grey': '#1f2937'
+        'code-grey': '#1f2937',
+        'code-grey-light': '#121821'
       },
       spacing: {
         28: '7rem',
@@ -38,7 +39,7 @@ module.exports = {
   },
   variants: {
     extend: {
-      textDecorationPlugin: ['dark', 'hover', 'responsive'],
+      textDecorationPlugin: ['dark', 'hover', 'responsive', 'group-hover'],
     },
   },
   plugins: [require('@downwindcss/text-decoration')],

@@ -10,13 +10,13 @@ export default function PostPreview({
   slug,
 }) {
   return (
-    <div className="mb-6">
+    <div className="mb-6 group">
       <div className="mb-5">
         <CoverImage slug={slug} title={title} imageObject={coverImage} url={imageBuilder(coverImage).url()} />
       </div>
       <h3 className="text-3xl mb-3 leading-snug">
         <Link as={`/posts/${slug}`} href="/posts/[slug]">
-          <a className="hover:text-decoration hover:text-decoration-underline hover:text-decoration-4 hover:text-decoration-pink">{title}</a>
+          <a className="group-hover:text-decoration group-hover:text-decoration-underline group-hover:text-decoration-4 group-hover:text-decoration-pink">{title}</a>
         </Link>
       </h3>
       <div className="text-lg italic mb-4">

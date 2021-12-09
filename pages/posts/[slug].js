@@ -10,13 +10,14 @@ import Layout from '../../components/layout'
 import { getAllPostsWithSlug, getPostAndMorePosts } from '../../lib/api'
 import PostTitle from '../../components/post-title'
 import Head from 'next/head'
-import { CMS_NAME } from '../../lib/constants'
+import Date from '../../components/date'
 
 export default function Post({ post, morePosts, preview }) {
   const router = useRouter()
   if (!router.isFallback && !post?.slug) {
     return <ErrorPage statusCode={404} />
   }
+
   return (
     <Layout preview={preview}>
       <Container>
@@ -30,18 +31,23 @@ export default function Post({ post, morePosts, preview }) {
                 <title>
                   {post.title}
                 </title>
-                {/* <meta property="og:image" content={post.ogImage.url} /> */}
               </Head>
               <PostHeader
                 title={post.title}
                 coverImage={post.coverImage}
-                date={post.date}
                 author={post.author}
               />
               <PostBody content={post.body} />
+
+              <SectionSeparator />
+
+              <div className="max-w-6xl mx-auto">
+                <div className="mb-6 text-lg italic">
+                  Published <Date dateString={post.date} /> by {post.author.name}
+                </div>
+              </div>
             </article>
 
-            <SectionSeparator />
             {morePosts.length > 0 && <MoreStories posts={morePosts} />}
           </>
         )}
@@ -64,13 +70,14 @@ export async function getStaticProps({ params, preview = false }) {
 
 export async function getStaticPaths() {
   const allPosts = await getAllPostsWithSlug()
+
   return {
-    paths: [],
-      // allPosts?.map((post) => ({
-      //   params: {
-      //     slug: post?.slug,
-      //   },
-      // })) || [],
+    paths:
+      allPosts?.map((post) => ({
+        params: {
+          slug: post?.slug || 'tet',
+        },
+      })) || [],
     fallback: true,
   }
 }

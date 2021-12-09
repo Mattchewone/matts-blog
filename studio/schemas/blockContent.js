@@ -65,6 +65,9 @@ export default {
     },
     {
       type: 'code'
+    },
+    {
+      type: 'gist'
     }
   ]
 }
