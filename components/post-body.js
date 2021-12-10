@@ -2,6 +2,7 @@ import BlockContent from '@sanity/block-content-to-react'
 import Gist from 'react-gist'
 import Highlight, { defaultProps } from 'prism-react-renderer'
 import dracula from 'prism-react-renderer/themes/dracula'
+import Link from 'next/link'
 
 const calculateLinesToHighlight = (lineNumbers, index) => {
   const lineNumber = index + 1
@@ -19,7 +20,7 @@ const serializers = {
               {tokens.map((line, i) => {
                 const lineProps = getLineProps({ line, key: i })
                 if (calculateLinesToHighlight(props.node?.highlightedLines || [], i)) {
-                  lineProps.className = `${lineProps.className} -ml-4 pl-3 bg-code-grey-light border-l-4 border-pink`
+                  lineProps.className = `${lineProps.className} -ml-4 pl-3 bg-code-grey-light border-l-4 border-pink-100`
                 }
                 return (
                   <div {...lineProps}>
@@ -42,6 +43,20 @@ const serializers = {
       )
     }
   },
+  marks: {
+    internalLink: ({mark, children}) => {
+      const {slug = {}} = mark
+      return <Link as={`/posts/${slug.current}`} href="/posts/[slug]">
+        <a className="underline text-pink-100 hover:text-pink-100 visited:text-pink-400">{children}</a>
+      </Link>
+    },
+    link: ({mark, children}) => {
+      const { blank, href } = mark
+      return blank ?
+        <a className="underline text-pink-100 hover:text-pink-100 visited:text-pink-400" href={href} target="_blank" rel="noopener">{children}</a>
+        : <a className="underline text-pink-100 hover:text-pink-100 visited:text-pink-400" href={href}>{children}</a>
+    }
+  }
 }
 
 export default function PostBody({ content }) {

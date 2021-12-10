@@ -1,4 +1,9 @@
 module.exports = {
+  content: [
+    './public/**/*.html',
+    './pages/**/*.{js,jsx,ts,tsx,vue}',
+    './components/**/*.{js,jsx,ts,tsx,vue}',
+  ],
   theme: {
     backgroundColor: theme => ({
       ...theme('colors'),
@@ -12,7 +17,12 @@ module.exports = {
         success: '#0070f3',
         cyan: '#79FFE1',
         'primary': '#0e0e0e',
-        pink: '#f64a8a',
+        pink: {
+          100: '#f64a8a',
+          200: '#D74179',
+          300: '#B93868',
+          400: '#9A2E56'
+        },
         'code-grey': '#1f2937',
         'code-grey-light': '#121821'
       },
@@ -37,10 +47,4 @@ module.exports = {
       },
     },
   },
-  variants: {
-    extend: {
-      textDecorationPlugin: ['dark', 'hover', 'responsive', 'group-hover'],
-    },
-  },
-  plugins: [require('@downwindcss/text-decoration')],
 }
