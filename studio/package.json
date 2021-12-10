@@ -1,11 +1,11 @@
 {
-  "name": "mysanityproject",
+  "name": "matts-blog-studio",
   "private": true,
   "version": "1.0.0",
   "description": "",
   "main": "package.json",
-  "author": "Knut Melvær <knut@sanity.io>",
-  "license": "UNLICENSED",
+  "author": "Matt Chaffe <matt@mattchaffe.uk>",
+  "license": "PRIVATE",
   "keywords": [
     "sanity"
   ],
