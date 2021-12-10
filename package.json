@@ -30,6 +30,7 @@
     "@fullhuman/postcss-purgecss": "^4.0.3",
     "@sanity/cli": "^2.0.5",
     "autoprefixer": "^10.4.0",
+    "cssnano": "^5.0.12",
     "lerna": "^4.0.0",
     "postcss": "^8.4.4",
     "postcss-preset-env": "^6.7.0",
