@@ -1,20 +1,20 @@
 import { useRouter } from 'next/router'
 import ErrorPage from 'next/error'
 import Container from '../../components/container'
-import PostBody from '../../components/post-body'
-import MoreStories from '../../components/more-stories'
+import ArticleBody from '../../components/article-body'
+import MoreArticles from '../../components/more-articles'
 import Header from '../../components/header'
-import PostHeader from '../../components/post-header'
+import PostHeader from '../../components/article-header'
 import SectionSeparator from '../../components/section-separator'
 import Layout from '../../components/layout'
-import { getAllPostsWithSlug, getPostAndMorePosts } from '../../lib/api'
-import PostTitle from '../../components/post-title'
+import { getAllArticlesWithSlug, getArticleAndMoreArticles } from '../../lib/api'
+import PostTitle from '../../components/article-title'
 import Head from 'next/head'
 import Date from '../../components/date'
 
-export default function Post({ post, morePosts, preview }) {
+export default function ArticleSlug({ article, moreArticles, preview }) {
   const router = useRouter()
-  if (!router.isFallback && !post?.slug) {
+  if (!router.isFallback && !article?.slug) {
     return <ErrorPage statusCode={404} />
   }
 
@@ -29,26 +29,26 @@ export default function Post({ post, morePosts, preview }) {
             <article>
               <Head>
                 <title>
-                  {post.title}
+                  {article.title}
                 </title>
               </Head>
               <PostHeader
-                title={post.title}
-                coverImage={post.coverImage}
-                author={post.author}
+                title={article.title}
+                coverImage={article.coverImage}
+                author={article.author}
               />
-              <PostBody content={post.body} />
+              <ArticleBody content={article.body} />
 
               <SectionSeparator />
 
               <div className="max-w-6xl mx-auto">
                 <div className="mb-6 text-lg italic">
-                  Published <Date dateString={post.date} /> by {post.author.name}
+                  Published <Date dateString={article.date} /> by {article.author.name}
                 </div>
               </div>
             </article>
 
-            {morePosts.length > 0 && <MoreStories posts={morePosts} />}
+            {moreArticles.length > 0 && <MoreArticles articles={moreArticles} />}
           </>
         )}
       </Container>
@@ -57,25 +57,25 @@ export default function Post({ post, morePosts, preview }) {
 }
 
 export async function getStaticProps({ params, preview = false }) {
-  const data = await getPostAndMorePosts(params.slug, preview)
+  const data = await getArticleAndMoreArticles(params.slug, preview)
   return {
     props: {
       preview,
-      post: data?.post || null,
-      morePosts: data?.morePosts || null,
+      article: data?.article || null,
+      moreArticles: data?.moreArticles || null,
     },
     revalidate: 1
   }
 }
 
 export async function getStaticPaths() {
-  const allPosts = await getAllPostsWithSlug()
+  const allArticles = await getAllArticlesWithSlug()
 
   return {
     paths:
-      allPosts?.map((post) => ({
+      allArticles?.map((article) => ({
         params: {
-          slug: post?.slug || 'tet',
+          slug: article?.slug || 'tet',
         },
       })) || [],
     fallback: true,

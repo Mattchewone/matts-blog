@@ -1,14 +1,14 @@
-import Container from '../components/container'
-import MoreStories from '../components/more-stories'
-import HeroPost from '../components/hero-post'
-import Header from '../components/header'
-import Layout from '../components/layout'
-import { getAllPostsForHome } from '../lib/api'
+import Container from '../../components/container'
+import MoreArticles from '../../components/more-articles'
+import HeroPost from '../../components/hero-post'
+import Header from '../../components/header'
+import Layout from '../../components/layout'
+import { getAllPostsForHome } from '../../lib/api'
 import Head from 'next/head'
 
-export default function Index({ allPosts, preview, metaImage }) {
-  const heroPost = allPosts[0]
-  const morePosts = allPosts.slice(1)
+export default function Article({ allArticles, preview, metaImage }) {
+  const heroPost = allArticles[0]
+  const moreArticles = allArticles.slice(1)
   return (
     <>
       <Layout preview={preview} metaImage={metaImage}>
@@ -27,7 +27,7 @@ export default function Index({ allPosts, preview, metaImage }) {
               excerpt={heroPost.excerpt}
             />
           )}
-          {morePosts.length > 0 && <MoreStories title="More Stories" posts={morePosts} />}
+          {moreArticles.length > 0 && <MoreArticles title="More Stories" articles={moreArticles} />}
         </Container>
       </Layout>
     </>
@@ -35,10 +35,10 @@ export default function Index({ allPosts, preview, metaImage }) {
 }
 
 export async function getStaticProps({ preview = false }) {
-  const { allPosts, metaImage } = await getAllPostsForHome(preview)
+  const { allArticles, metaImage } = await getAllPostsForHome(preview)
 
   return {
-    props: { allPosts, preview, metaImage },
+    props: { allArticles, preview, metaImage },
     revalidate: 1
   }
 }

@@ -17,7 +17,7 @@ export default function HeroPost({
       <div className="flex flex-col gap-6 md:mb-16">
         <div>
           <h3 className="mb-4 text-4xl lg:text-6xl leading-tight">
-            <Link as={`/posts/${slug}`} href="/posts/[slug]">
+            <Link as={`/articles/${slug}`} href="/articles/[slug]">
               <a className="group-hover:underline group-hover:decoration-4 group-hover:decoration-pink-100">{title}</a>
             </Link>
           </h3>

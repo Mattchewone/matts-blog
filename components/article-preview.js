@@ -1,8 +1,9 @@
-import Date from '../components/date'
+import Date from './date'
 import CoverImage from './cover-image'
 import Link from 'next/link'
 import {imageBuilder} from '../lib/sanity'
-export default function PostPreview({
+
+export default function ArticlePreview({
   title,
   coverImage,
   date,
@@ -15,7 +16,7 @@ export default function PostPreview({
         <CoverImage slug={slug} title={title} imageObject={coverImage} url={imageBuilder(coverImage).url()} />
       </div>
       <h3 className="text-3xl mb-3 leading-snug">
-        <Link as={`/posts/${slug}`} href="/posts/[slug]">
+        <Link as={`/articles/${slug}`} href="/articles/[slug]">
           <a className="group-hover:underline group-hover:decoration-4 group-hover:decoration-pink-100">{title}</a>
         </Link>
       </h3>

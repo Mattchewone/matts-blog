@@ -69,7 +69,7 @@ export default {
                 type: 'reference',
                 title: 'Reference',
                 to: [
-                  { type: 'post' },
+                  { type: 'article' },
                   // other types you may want to link to
                 ]
               }

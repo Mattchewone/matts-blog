@@ -46,7 +46,8 @@ const serializers = {
   marks: {
     internalLink: ({mark, children}) => {
       const {slug = {}} = mark
-      return <Link as={`/posts/${slug.current}`} href="/posts/[slug]">
+
+      return <Link as={`/articles/${slug.current}`} href="/articles/[slug]">
         <a className="underline text-pink-100 hover:text-pink-100 visited:text-pink-400">{children}</a>
       </Link>
     },
@@ -59,7 +60,7 @@ const serializers = {
   }
 }
 
-export default function PostBody({ content }) {
+export default function ArticleBody({ content }) {
   return (
     <div className="max-w-6xl mx-auto">
       <BlockContent

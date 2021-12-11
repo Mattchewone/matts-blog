@@ -22,13 +22,13 @@ export default {
       }
     },
     {
-      name: 'posts',
-      title: 'Posts',
+      name: 'articles',
+      title: 'Artilces',
       type: 'array',
       of: [{
         type: 'reference',
         to: [
-          {type: 'post'}
+          {type: 'article'}
         ]
       }]
     }

@@ -1,8 +1,8 @@
 import Container from '../components/container'
-import MoreStories from '../components/more-stories'
+import MoreArticles from '../components/more-articles'
 import Header from '../components/header'
 import Layout from '../components/layout'
-import PostBody from '../components/post-body'
+import ArticleBody from '../components/article-body'
 import { getHomeData } from '../lib/api'
 import Head from 'next/head'
 
@@ -15,9 +15,9 @@ export default function Index({ content, preview }) {
         </Head>
         <Container>
           <Header />
-          <PostBody content={content.body} />
+          <ArticleBody content={content.body} />
 
-          <MoreStories posts={content.posts} />
+          <MoreArticles articles={content.articles} />
         </Container>
       </Layout>
     </>
@@ -26,6 +26,7 @@ export default function Index({ content, preview }) {
 
 export async function getStaticProps({ preview = false }) {
   const [content] = await getHomeData()
+
   return {
     props: { content, preview },
     revalidate: 1
