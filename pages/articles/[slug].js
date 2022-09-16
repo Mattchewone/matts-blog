@@ -11,6 +11,7 @@ import { getAllArticlesWithSlug, getArticleAndMoreArticles } from '../../lib/api
 import PostTitle from '../../components/article-title'
 import Head from 'next/head'
 import Date from '../../components/date'
+import Tags from '../../components/tags'
 
 export default function ArticleSlug({ article, moreArticles, preview }) {
   const router = useRouter()
@@ -47,6 +48,8 @@ export default function ArticleSlug({ article, moreArticles, preview }) {
                 </div>
               </div>
             </article>
+
+            <Tags tags={article.categories} />
 
             {moreArticles.length > 0 && <MoreArticles articles={moreArticles} />}
           </>
