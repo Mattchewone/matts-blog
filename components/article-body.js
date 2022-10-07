@@ -62,7 +62,7 @@ const serializers = {
 
 export default function ArticleBody({ content }) {
   return (
-    <div className="max-w-6xl mx-auto">
+    <div className="prose dark:prose-invert prose-xl max-w-6xl mx-auto">
       <BlockContent
         blocks={content}
         projectId={process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}

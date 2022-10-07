@@ -23,7 +23,7 @@ export default {
     },
     {
       name: 'articles',
-      title: 'Artilces',
+      title: 'Articles',
       type: 'array',
       of: [{
         type: 'reference',

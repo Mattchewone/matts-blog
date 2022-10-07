@@ -40,6 +40,7 @@ export default function ArticleSlug({ article, moreArticles, preview }) {
               />
               <ArticleBody content={article.body} />
 
+              <Tags tags={article.categories} />
               <SectionSeparator />
 
               <div className="max-w-6xl mx-auto">
@@ -48,8 +49,6 @@ export default function ArticleSlug({ article, moreArticles, preview }) {
                 </div>
               </div>
             </article>
-
-            <Tags tags={article.categories} />
 
             {moreArticles.length > 0 && <MoreArticles articles={moreArticles} />}
           </>
