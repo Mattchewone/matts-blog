@@ -1,5 +1,9 @@
 {
   "root": true,
+  "api": {
+    "projectId": "placeholder",
+    "dataset": "placeholder"
+  },
   "project": {
     "name": "Matts Blog",
     "basePath": "/studio"
@@ -10,7 +14,6 @@
     "@sanity/default-layout",
     "@sanity/default-login",
     "@sanity/desk-tool",
-    "asset-source-unsplash",
     "@sanity/code-input"
   ],
   "env": {
