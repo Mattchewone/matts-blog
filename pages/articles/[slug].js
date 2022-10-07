@@ -20,7 +20,7 @@ export default function ArticleSlug({ article, moreArticles, preview }) {
   }
 
   return (
-    <Layout preview={preview}>
+    <Layout preview={preview} metaImage={article.coverImage}>
       <Container>
         <Header />
         {router.isFallback ? (
