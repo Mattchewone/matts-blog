@@ -9,7 +9,7 @@ export default function Tags({ tags }) {
 
       <div className="flex gap-3">
         {tags.map(tag => (
-          <Link as={`/tags/${tag.title}`} href="/tags/[slug]">
+          <Link as={`/tags/${tag.title}`} key={tag.title} href="/tags/[slug]">
             <a className="m-1 flex flex-wrap justify-between items-center text-xs sm:text-sm bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 rounded px-4 py-2 font-bold leading-loose cursor-pointer dark:text-gray-300">{tag.title}</a>
           </Link>
         ))}
