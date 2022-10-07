@@ -16,7 +16,9 @@ export default function Meta({ metaImage }) {
         name="description"
         content={`A place for my thoughts, articles and anything else developer related.`}
       />
-      <meta property="og:image" content={imageBuilder(metaImage).width(800).height(418).url()} />
+      {
+        metaImage ? <meta property="og:image" content={imageBuilder(metaImage).width(800).height(418).url()} /> : null
+      }
     </Head>
   )
 }

@@ -20,7 +20,7 @@ export default function ArticleSlug({ article, moreArticles, preview }) {
   }
 
   return (
-    <Layout preview={preview} metaImage={article.coverImage}>
+    <Layout preview={preview} metaImage={article?.coverImage}>
       <Container>
         <Header />
         {router.isFallback ? (
@@ -40,7 +40,9 @@ export default function ArticleSlug({ article, moreArticles, preview }) {
               />
               <ArticleBody content={article.body} />
 
-              <Tags tags={article.categories} />
+              {
+                article.categories && article.categories.length ? <Tags tags={article.categories} /> : null
+              }
               <SectionSeparator />
 
               <div className="max-w-6xl mx-auto">
