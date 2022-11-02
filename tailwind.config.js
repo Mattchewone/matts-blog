@@ -7,24 +7,24 @@ module.exports = {
   theme: {
     backgroundColor: theme => ({
       ...theme('colors'),
-      'primary': '#0e0e0e'
+      'primary-dark': '#0e0e0e'
     }),
     extend: {
       colors: {
-        'accent-1': '#FAFAFA',
-        'accent-2': '#EAEAEA',
-        'accent-7': '#333',
-        success: '#0070f3',
-        cyan: '#79FFE1',
-        'primary': '#0e0e0e',
+        // 'accent-1': '#FAFAFA',
+        // 'accent-2': '#EAEAEA',
+        // 'accent-7': '#333',
+        // success: '#0070f3',
+        // cyan: '#79FFE1',
+        // 'primary': '#0e0e0e',
         pink: {
           100: '#f64a8a',
           200: '#D74179',
           300: '#B93868',
           400: '#9A2E56'
         },
-        'code-grey': '#1f2937',
-        'code-grey-light': '#121821'
+        // 'code-grey': '#1f2937',
+        // 'code-grey-light': '#121821'
       },
       spacing: {
         28: '7rem',

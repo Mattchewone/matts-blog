@@ -56,6 +56,9 @@ const serializers = {
       return blank ?
         <a className="underline text-pink-100 hover:text-pink-100 visited:text-pink-400" href={href} target="_blank" rel="noopener">{children}</a>
         : <a className="underline text-pink-100 hover:text-pink-100 visited:text-pink-400" href={href}>{children}</a>
+    },
+    code: ({mark, children}) => {
+      return <div className="bg-slate-200/25 rounded-lg p-4"><code className="break-words">{children}</code></div>
     }
   }
 }
