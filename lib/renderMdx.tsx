@@ -54,7 +54,7 @@ function CodeBlock({ code, language }: { code: string; language: string }) {
                 }
               })()}
             >
-              <span className="inline-block w-8 opacity-50">{i + 1}</span>
+              <span className="inline-block w-8 opacity-50 mr-3">{i + 1}</span>
               {line.map((token, key) => (
                 <span key={key} {...getTokenProps({ token })} />
               ))}

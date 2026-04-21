@@ -14,7 +14,9 @@ export default async function HomePage() {
           {await renderMdx(content.body, '')}
         </div>
       ) : null}
-      <MoreArticles articles={content.articles} />
+      {content.featured?.length ? (
+        <MoreArticles title="Featured" articles={content.featured} />
+      ) : null}
     </Container>
   )
 }

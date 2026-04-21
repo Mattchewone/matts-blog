@@ -49,9 +49,9 @@ export default function GistEmbed({ id, file }: Props) {
   }, [containerId, id, file])
 
   return (
-    <div className="my-6">
-      <div id={containerId} />
-    </div>
+    <span className="block my-6">
+      <span id={containerId} />
+    </span>
   )
 }
 

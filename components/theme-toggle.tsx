@@ -4,11 +4,6 @@ import { useEffect, useState } from 'react'
 
 const STORAGE_KEY = 'theme'
 
-function getInitialTheme() {
-  if (typeof window === 'undefined') return 'light'
-  return window.localStorage.getItem(STORAGE_KEY) || 'light'
-}
-
 function applyTheme(theme: string) {
   const root = document.documentElement
   const useDark = theme === 'dark'
@@ -16,12 +11,38 @@ function applyTheme(theme: string) {
 }
 
 export default function ThemeToggle() {
-  const [theme, setTheme] = useState(getInitialTheme)
+  const [mounted, setMounted] = useState(false)
+  const [theme, setTheme] = useState<'light' | 'dark'>('light')
 
   useEffect(() => {
+    setMounted(true)
+    const saved = window.localStorage.getItem(STORAGE_KEY)
+    const initial =
+      saved === 'dark' || saved === 'light'
+        ? saved
+        : document.documentElement.classList.contains('dark')
+          ? 'dark'
+          : 'light'
+    setTheme(initial)
+  }, [])
+
+  useEffect(() => {
+    if (!mounted) return
     applyTheme(theme)
     window.localStorage.setItem(STORAGE_KEY, theme)
-  }, [theme])
+  }, [mounted, theme])
+
+  if (!mounted) {
+    return (
+      <button
+        type="button"
+        className="text-sm sm:text-base md:text-xl font-bold opacity-0 pointer-events-none"
+        aria-label="Toggle theme"
+      >
+        Theme
+      </button>
+    )
+  }
 
   return (
     <button
