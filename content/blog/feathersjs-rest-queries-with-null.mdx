@@ -1,0 +1,123 @@
+---
+title: "FeathersJS REST queries with null"
+description: ""
+date: "2020-01-13T09:00:00.000+00:00"
+tags: ["FeathersJS"]
+coverImage: "/content-images/feathersjs-rest-queries-with-null/cover.jpg"
+---
+
+I have been working on a [FeathersJS](https://feathersjs.com/) project which was using [realtime](https://socket.io/) on the web client, during a performance review we had been looking at what can be removed that wasn't necessary in order to reduce the core / vendor bundle sizes. As realtime wasn't being used for any realtime messages or updates this was a relatively obvious place to look.
+
+
+Having been using FeathersJS for a number of years now I thought that this would be a relatively straight forward change, even though I had yet to swap client transports on a project myself and had in fact been using realtime for the majority of the projects I have been involved in. The code change itself was as expected pretty simple, install the new client libraries for REST and install node-fetch as this was a [Server Side Rendered](https://vuejs.org/v2/guide/ssr.html) application.
+
+
+## The problems begin
+
+
+However after restarting the application and visiting a few pages locally it became apparant that something wasn't right. Pages were not loading properly, so I began to investigate.
+
+
+### Array issues
+
+
+We had quite complex queries which had lots of deeply nested parameters which would then be used within a hook to make [associations](https://github.com/feathersjs-ecosystem/feathers-sequelize#associations) which worked perfectly fine with websocket queries, but was totally broken when using REST. After looking into how FeathersJS parses the query string I found that it was using the [querystring](https://www.npmjs.com/package/qs) package which had an option to increase how deep it would parse an nested string. It will by default only parse up to 5 children deep, which was a problem as we had queries which went deeper. This is what would happen if you had a query with more than 5 children deep:
+
+
+```javascript
+const input = 'a[b][c][d][e][f][g][h][i]=j'
+const output = {
+    a: {
+        b: {
+            c: {
+                d: {
+                    e: {
+                        f: {
+                            '[g][h][i]': 'j'
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
+
+### Array solution
+
+
+The solution is highlighted within [faqs](https://docs.feathersjs.com/help/faq.html#why-are-queries-with-arrays-failing) whereby you can set a custom qs instance with your own options. This allows you to customise how deep you would like the querystring to be parsed:
+
+
+```javascript
+// Update limits for `qs` to allow for deeper
+// parsing of objects specifically from REST
+app.set('query parser', function(str) {
+    return qs.parse(str, {
+        arrayLimit: 100,
+        depth: 20,
+        parameterLimit: 2000
+    });
+});
+```
+
+
+### null issue
+
+
+The next issue which also appears within the [faqs](https://docs.feathersjs.com/help/faq.html#my-queries-with-null-values-aren-t-working) is that a null value when in a query being sent via REST is not being handled correctly, it will appear as an empty string. This doesn't work when using Sequelize with postgres as a null value would typically be turned into a 'property' is not null query, which ends up being 'property' != ''.
+
+
+### null solution
+
+
+In order for null to be handled correctly we must look through the qs library API documentation. We can see that there is an option to allow for strictNullHandling which we can add to the server's query parser like we set above.
+
+
+```javascript
+// Allow for strict null handling
+app.set('query parser', function(str) {
+    return qs.parse(str, {
+        arrayLimit: 100,
+        depth: 20,
+        parameterLimit: 2000,
+        strictNullHandling: true
+    });
+});
+```
+
+
+The issue now is how do we set how the qs library behaves on the client when it calls qs.stringify on the query object? Well currently this isn't possible, there isn't a way to be able to pass options to the qs.stringify through FeathersJS rest-client, nor is there a way that will allow you to extend and customise how the querystring is created.
+
+
+But fear not, for I have a PR which will remedy this issue. I had originally created a PR for the ability to add options to this effect, but after a short discussion and additional information from David the core developer on FeathersJS it was decided that allowing extensibility was favoured over options, so a new PR was made to make this possible. It will allow the following to be possible:
+
+
+```javascript
+import feathers from '@feathersjs/feathers'
+import rest from '@feathersjs/rest-client'
+import {
+    FetchClient
+} from '@feathersjs/rest-client'
+import qs from 'qs'
+const app = feathers()
+
+class MyFetchClient extends FetchClient {
+    getQuery(query) {
+        if (Object.keys(query).length !== 0) {
+            const queryString = qs.stringify(query, {
+                strictNullHandling: true
+            }) return `?${queryString}`
+        }
+        return ''
+    }
+}
+// Configure API url
+const restClient = rest('https://feathers-api.com')
+// Configure rest client
+app.configure(restClient.fetch(window.fetch, MyFetchClient))
+```
+
+
+With of these changes in places this allows for a much smoother transition between REST and realtime web clients for a FeathersJS API.

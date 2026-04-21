@@ -1,0 +1,51 @@
+---
+title: "Gitlab CI/CD Testing Nodejs App"
+description: ""
+date: "2018-08-01T16:23:25.534+01:00"
+tags: ["Gitlab"]
+coverImage: "/content-images/gitlab-ci-cd/cover.jpg"
+---
+
+If you are planning to deploy your app via CI/CD pipeline it’s recommended to ensure you have a good coverage of tests to ensure when deploying that nothing is broken (too much) and pushed out to your production environment.
+
+
+Gitlab has built in CI/CD which makes this an easy process to implement, I have touched on deploying with Gitlab in a previous article, but I haven’t gone into much detail on running the tests, which are fairly simple to setup.
+
+
+I am going to base this article around using the `node-config` package. Setting up environment variables is as easy as creating a new file which will map to the `NODE_ENV` so for this I will create a `test.json` which will point to environmental variables and will override the defaults.
+
+
+The two configs above show how the `test.json` will use the environment variable `MONGO_URI` and will use this to overwrite what is in the default.json.
+
+
+Now we are able to setup a `SECRET` in Gitlab which will create an environment variable. You can do this from your project, `Settings -> CI/CI -> Variables`.
+
+
+#### Gitlab Services
+
+
+So far I have shown how to set up the environment so that we can change a db_url so that we can run our test suite against a actual db. If you are testing locally you are probably running a db like mongo in Docker or just have it installed and are pointing to it via `localhost`.
+
+
+Gitlab has what are called _**Services**_ which are containers which provide a service to your app during it’s pipeline.
+
+
+With the above example lines 9–10 are setting up the service which we require during that stage of the pipeline. This will spin up a Mongo container alongside the container which is spun up to run your tests. You will have access it via the service name. For example: `mongodb://mongo:27017/test` or using a different service `postgres://postgres:8001` with both mongo and postgres being the name of the service/container.
+
+
+Using the `script` part of the stage, we can inform the pipeline what it should be doing, so in the example I am installing the latest version of npm I am then installing all deps using npm i and then running the test command.
+
+
+Within my test command I am running the package `nyc` which will create a coverage report. The last statement in this pipeline informs Gitlab how to read the coverage report and where to find the values. Gitlab can then show the coverage in your job output, also you can create badges to show in your README which will show the test coverage.
+
+
+#### Deploy
+
+
+Once all of your tests have passed it will move on to the next stage of your pipeline which in my example is deploying to Heroku using the dpl package. If any tests fail the deploy stage will not be executed. This is important to prevent any errors getting deployed to your production environment.
+
+
+You can also set up your deploy pipeline to be manual rather than auto-deploy, what this means is once your tests have passed it will require you to actively click a deploy button to run the deploy stage and publish to your production environment. This could be useful as a last step to check over any changes before deploying.
+
+
+Thanks for reading!

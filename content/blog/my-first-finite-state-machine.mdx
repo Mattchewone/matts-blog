@@ -1,0 +1,187 @@
+---
+title: "My First Finite State Machine"
+description: ""
+date: "2020-04-09T10:00:00.000+01:00"
+tags: ["Javascript"]
+coverImage: "/content-images/my-first-finite-state-machine/cover.jpg"
+---
+
+_**First of all I hope that everyone is staying safe during this Pandemic!**_
+
+
+Given the current situation, I was involved in a couple of group chats which involved quizzes which had Movie titles described in Emojis. I thought this was quite fun, but what I saw was depending on the size of the group and how available people were, that often people would reply with answers in the group chat which meant that others didn't get a chance to play the whole quiz without seeing the answers and it also meant that you often kept losing track of the questions.
+
+
+I thought it would be fun to play around with creating a simple quiz game online for this purpose 😀.
+
+
+I spun up a Nuxt application, created a Firebase project so I could use the hosting and Firestore services, and then I started to draw out my simple idea (which can be seen online [here](https://quizzes.mattchaffe.uk)).
+
+
+## Finite State Machines (FSM)
+
+
+I have been hearing a lot about FSM through colleagues and the Twitterverse and thought this would be a good opportunity for me to dip my toe in and try one out.
+
+
+### What are Finite State Machines
+
+
+Let's start at the beginning to see what FSMs are and how they can be useful. An FSM is a way to describe a finite number of states in which the application can be in exactly one of at any given time. This means that I can describe all the states that my application could be in and I can be sure that it will only be in one of those states.
+
+
+### How did I create the FSM
+
+
+I started with a pretty rough game component which looked similar to the following:
+
+
+```html
+<template>
+  <main>
+    <Quiz v-if="!completed" : questions="questions" />
+    <Results v-if="completed && answered" : results="results" />
+  </main>
+</template>
+```
+
+
+This might not look too crazy as this application is fairly simple but it does allow for the application to be in a state where if the game is completed but there are no answers the user will see nothing. Easily solvable, sure, but then that's no fun and I want to play with an FSM 😜.
+
+
+I decided to create my first FSM using [xstate](https://xstate.js.org/docs/) and the state machine looks similar to this:
+
+
+```javascript
+import {
+    Machine,
+    assign
+} from 'xstate'
+const gameMachine = Machine({
+    id: 'game',
+    initial: 'play',
+    context: {
+        answered: 0,
+        guesses: {}
+    },
+    states: {
+        play: {
+            on: {
+                RESOLVE: {
+                    target: 'results',
+                    actions: assign({
+                        answered: (context, event) => event.answered,
+                        guesses: (context, event) => event.guesses
+                    })
+                }
+            }
+        },
+        results: {
+            on: {
+                RESET: 'play'
+            },
+            initial: 'hide',
+            states: {
+                hide: {
+                    on: {
+                        TOGGLE: 'show'
+                    }
+                },
+                show: {
+                    on: {
+                        TOGGLE: 'hide'
+                    }
+                }
+            }
+        }
+    }
+})
+```
+
+
+_What I found incredibly useful when developing this was the __[online visualizer](https://xstate.js.org/viz/)__ which allowed me to toggle through all the states and see it in action._
+
+
+Breaking this down I have two states play or results, within results there are _two_ child states which allow the user to show/hide the answers. It's pretty simple. The actions within the play state allow me to send data to the gameMachine so it can hold additional context. My GameComponent now looks like:
+
+
+```html
+<main>
+  <component
+    :is="currentComponent"
+    :questions="questions"
+    :answers="answers"
+    :answered="context.answered"
+    :guesses="context.guesses"
+    :show-answers="current.matches('results.show')"
+    @answer="validate"
+    @reset="send('RESET')"
+    @toggleAnswers="send('TOGGLE')"
+  />
+</main>
+```
+
+
+I use Vue's dynamic component to render the component based on which state the machine is in, the components $emit to the parent component which then sends a signal to the gameMachine to instruct it to move to the next state. This means that my game can never be in a state where nothing is visible!
+
+
+### Using the FSM with Vue
+
+
+[xstate](https://xstate.js.org/docs/) provides a simple way to use a State Machine with Vue and that is to use a [interpreter](https://xstate.js.org/docs/guides/interpretation.html#interpreting-machines). This handles things the state transitions, executing events and many more. I would recommend reading up on the docs for the full list of what it does.
+
+
+To use this within Vue / Nuxt, within your component you will need to import or create your machine (recommend you keep your machines outside of the component so they can be shared/tested in isolation of the component), then start the machine and listen to any state transitions so you can update the state. That's a lot to take in, let's see some code:
+
+
+```html
+<template>
+  <div> My Current State {{ current.value }} <button @click="toggle()"> </div>
+</template>
+<script>
+import { Machine, interpret } from 'xstate'
+const demoMachine = Machine({
+  id: 'demo',
+  initial: 'hello',
+  context: {
+    answered: 0,
+    guesses: {}
+  },
+  states: {
+    hello: {
+      on: { TOGGLE: 'goodbye' }
+    },
+    goodbye: {
+      on: { TOGGLE: 'hello' }
+    }
+  }
+}) 
+
+export default {
+  data: () => ({
+    demoMachine: interpret(demoMachine),
+    current: demoMachine.initialState
+  }),
+  created () {
+    // Start service on component creation
+    this.demoMachine
+      .onTransition((state) => {
+        // Update the current state component data property with the next state
+        this.current = state
+      })
+      .start()
+  },
+  methods: {
+    toggle () {
+      this.demoMachine.send('TOGGLE')
+    }
+  }
+}
+</script>
+```
+
+
+Breaking this down we can see that we set the interpreted machine onto the component's data along with the machine's initialState. Within the created lifecycle hook we start the interpreted machine and listen to transitions, within the callback of the transition change we update the components state from the machine.
+
+
+Thanks for reading!

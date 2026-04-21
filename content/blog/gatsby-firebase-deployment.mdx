@@ -1,0 +1,53 @@
+---
+title: "Gatsby Firebase Deployment"
+description: ""
+date: "2019-06-05T10:00:00.000+01:00"
+tags: ["Javascript"]
+coverImage: "/content-images/gatsby-firebase-deployment/cover.jpg"
+---
+
+Having recently updated this very site with Gatsby I wanted to set up a basic pipeline with Gitlab to deploy my site when I push changes to the master branch. This will be beneficial so that if I create another branch, the deploy process won’t initiate on other branches.
+
+
+## Gitlab CI
+
+
+[Gist: .gitlab-ci.yml](https://gist.github.com/baa2989a6d38cebe7847391739728c07)
+
+
+The above gist shows how simple it is to create a basic CI pipeline. Let's break it down a little though. I only have a deploy task, which uses the latest node container image, then using the script section of the job run npm i to install all the project dependencies. Then we can install some globals, gatsby-cli and firebase-tools, these are used to build the static site and for deployment. To create the site files I would run the gatsby build, and set up firebase to use token authentication. We will come back to this in a minute, and then we run the firebase deploy to... well... deploy the site.
+
+
+## Firebase Token Auth
+
+
+As we are deploying using CI, we need the deployment to be "hands off" and will need to have an authenticated token for the CI to use to access the project and have permission to deploy. Thankfully firebase has a handy way to generate a token for this exact purpose. If you run the following in your terminal, it will open a browser tab and request you grant access to create this token.
+
+
+```bash
+firebase login:ci 
+```
+
+
+Firebase will then provide you with a handy token within your terminal, which can be used within [Gitlab's CI variables](https://gitlab.com/help/ci/variables/README)
+
+
+To use this token we need to add it to Gitlab's Variables for CI/CD, which can be accessed via Settings > CI / CD:
+
+
+You can see that I have two variables, FIREBASE_TOKEN and PROJECT_ID, these will be injected by Gitlab into the pipeline.
+
+
+Once you have added the secrets and created the .gitlab-ci.yml file, push to master and this should kick off a build and deploy to firebase! Woop!
+
+
+## Create content...
+
+
+Now you can create your content, commit, push to gitlab and let it deploy whilst you can sit back and enjoy your new article/blog!
+
+
+Awesome!!
+
+
+Thanks for reading!

@@ -1,0 +1,27 @@
+---
+title: "FeathersJS deployment - Gitlab CI/CD - Heroku"
+description: ""
+date: "2018-04-26T13:25:10.664+01:00"
+tags: ["Gitlab"]
+coverImage: "/content-images/pm2-deployment-gitlab-ci/cover.jpg"
+---
+
+Deploying FeathersJS apps with Gitlab couldn’t be easier with the integrated CI/CD process. Here is how I am deploying to Heroku for staging enviroments. This is my .gitlab-ci.yml file in the root of my project.
+
+
+[Gist: .gitlab-ci.yml](https://gist.github.com/5e067b4698ad88ae56619ac4fbfbdc1c)
+
+
+Log in to Gitlab and set up some CI/CD [secrets](https://gitlab.com/help/ci/variables/README#secret-variables) which contain your `HEROKU_APP` which is the name of the app within Heroku, and your `HEROKU_CI_API_KEY` which is your key used for deploying.
+
+
+Create an app within Heroku with the same name as `HEROKU_NAME` if you have not already done so.
+
+
+Push to your development branch and you should see the two stages within your pipeline, one for tests and one for deployment. Assuming your tests pass then your app should be deployed to Heroku.
+
+
+If you see anything that is wrong or can be improved please get in touch.
+
+
+Thanks for reading!

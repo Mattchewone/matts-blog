@@ -1,0 +1,97 @@
+---
+title: "FizzBuzz coding challenge"
+description: ""
+date: "2019-07-22T10:00:00.000+01:00"
+tags: ["Javascript"]
+coverImage: "/content-images/fizzbuzz-coding-challenge/cover.jpg"
+---
+
+Whilst I was going through my backlog of videos to watch, I watched this [video](https://www.youtube.com/watch?v=QPZ0pIK_wsc) which explains the use of a coding interview question; The FizzBuzz coding interview question. I wanted to have a go at answering the question myself and wanted to share my thought process as I did it.
+
+
+I stopped the video at around 1:40 as I wanted to go through an answer it myself without seeing the answer within the video.
+
+
+## My solutions
+
+
+With the above question in mind, my first thought on how to approach this was how to determine the multiples of 3 and 5. What came to mind was the [modulus/remainder operator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Arithmetic_Operators#Remainder_())% I knew that multiples of 3 & 5 should retain remainder 0, so this could be used to determine when to output the correct text.
+
+
+To start the challenge I used [jsfiddle](https://jsfiddle.net/) and I created the following as my starting point:
+
+
+```javascript
+function fizzbuzz(num) {
+    return num
+}
+for (let i = 1; i <= 100; i++) {
+    console.log(fizzbuzz(i))
+}
+```
+
+
+I then started on my implementation which first looked like this:
+
+
+```javascript
+function fizzbuzz(num) {
+    if (num % 3 === 0 && num % 5 === 0) {
+        return `fizzbuzz`
+    } else if (num % 3 === 0) {
+        return `fizz`
+    } else if (num % 5 === 0) {
+        return `buzz`
+    }
+    return num
+}
+for (let i = 1; i <= 100; i++) {
+    console.log(fizzbuzz(i))
+}
+```
+
+
+First I check if the number is a multiple of 3 & 5 if so I return the combined fizzbuzz text, I then check if the number is a multiple of either 3 or 5 and output the correct text, falling back to just returning the initial number.
+
+
+This is quite verbose and has a bit of duplication of the checks for the multiples, so I thought I would improve my answer.
+
+
+```javascript
+function fizzbuzz(num) {
+    const isFizz = num % 3 === 0
+    const isBuzz = num % 5 === 0
+    if (isFizz && isBuzz) {
+        return `fizzbuzz`
+    } else if (isFizz) {
+        return `fizz`
+    } else if (isBuzz) {
+        return `buzz`
+    }
+    return num
+}
+for (let i = 1; i <= 100; i++) {
+    console.log(fizzbuzz(i))
+}
+```
+
+
+So, this is better but still a bit verbose, we have removed the duplicated checks into a single check that can be re-used, but still has the multiple if statement. How can this be reduced and made more concise I thought.
+
+
+Here is my final solution:
+
+
+```javascript
+function fizzbuzz(num) {
+    const isFizz = num % 3 === 0
+    const isBuzz = num % 5 === 0
+    return `${isFizz ? 'fizz' : ''}${isBuzz ? 'buzz' : ''}` || num
+}
+for (let i = 1; i <= 100; i++) {
+    console.log(fizzbuzz(i))
+}
+```
+
+
+I removed the if statement in favour of a [ternary](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Conditional_Operator) within a [template literal](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals) which uses a [short-circuit](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Logical_Operators) operator to fallback to the number. This boils down to creating a string which first checks if the number is a multiple of 3 which will then add the word fizz, then checks if the number is a multiple of 5 which will add the word buzz. Which will account for being either and both, and it will be an empty string if neither of them is truthy in this case the short-circuit operator will evaluate the empty string as falsey and will use the what is on the right hand of the operator which is the initial number.

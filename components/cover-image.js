@@ -1,8 +1,9 @@
 import cn from 'classnames'
 import Link from 'next/link'
-import { imageBuilder } from '../lib/sanity'
 
-export default function CoverImage({ title, url, imageObject, slug }) {
+export default function CoverImage({ title, slug, coverImage }) {
+  if (!coverImage) return null
+
   const image = (
     <img
       width={1240}
@@ -12,15 +13,15 @@ export default function CoverImage({ title, url, imageObject, slug }) {
       className={cn('shadow-small w-full h-full', {
         'hover:shadow-medium transition-shadow duration-200': slug,
       })}
-      src={imageBuilder(imageObject).width(1240).height(540).url()}
+      src={coverImage}
     />
   )
 
   return (
     <div className="sm:mx-0">
       {slug ? (
-        <Link as={`/articles/${slug}`} href="/articles/[slug]">
-          <a aria-label={title}>{image}</a>
+        <Link href={`/articles/${slug}`} aria-label={title}>
+          {image}
         </Link>
       ) : (
         image

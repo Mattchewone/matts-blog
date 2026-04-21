@@ -1,0 +1,97 @@
+---
+title: "React Native OAuth"
+description: ""
+date: "2019-01-11T16:35:21.084+00:00"
+tags: ["React"]
+coverImage: "/content-images/react-native-oauth/cover.jpg"
+---
+
+I just want to start with I have little to no experience with React or React Native so there are likely things I am doing which could be improved, but I wanted to learn and have to start somewhere.
+
+
+I decided to begin with getting an OAuth workflow within React Native. I’m going to run through this from a Mac OSX user perspective, and for a target of iOS.
+
+
+### Getting Started
+
+
+Where better to get started than following the Getting Started guide, I initially followed the Expo flow as this was the one which is shown by default. But I soon learned that with OAuth you need to install some native dependencies for the Auth flow.
+
+
+To create the app initially it’s fairly straight forward, install the cli npm install -g react-native-cli and then create your project react-native init MyAwesomeAuthApp.
+
+
+### Adding Auth
+
+
+#### Installation
+
+
+For the Auth, I am going to use the [React Native App Auth](https://github.com/FormidableLabs/react-native-app-auth) package, which allows OAuth 2.0 and OpenID Connect providers.
+
+
+Install and link the native package via the following:
+
+
+```bash
+npm i react-native-app-auth react-native link react-native-app-auth 
+```
+
+
+The link part is what adds the native dependencies to the ios and andriod builds. I opted to use the Carthage step to add the dependencies as I had some issues with the Cocoa pods not working correctly to install the dependency. Start by navigate into the iOS folder and create a Cartfile with the following contents:
+
+
+```bash
+github "openid/AppAuth-iOS" "master" 
+```
+
+
+You will need to have carthage installed which you can do with brew install carthage. Once you have installed and created the Cartfile you can run carthage update — platform iOS to install the packages.
+
+
+Once this has completed you will need to copy the AppAuth.framework which is located in ios/Carthage/Build/iOS and add that to Frameworks within Xcode. Finally setup a Copy Files phase within the Build Phases, pick Frameworks as the destination and add AppAuth.framework and be sure to check the Code Sign on Copy option.
+
+
+#### Xcode setup
+
+
+We are going to need to open the ios project in Xcode now to finish the setup. From within the ios folder if you run open MyAuthApp.xcodeproj this should open Xcode.
+
+
+Once the project is open, expand the folder which says the project name in my case MyAuthApp you should see a file called AppDelegate.h you can replace it’s contents with the following:
+
+
+[Gist: AppDelegate.h](https://gist.github.com/59fe11ac4a25e1eeaad47cfb32de9ac9)
+
+
+This sets up the AuthorisationFlowManager, and you will need to update the AppDelegate.m also to allow the openUrl method to feed the authorisation into the app. Before the call to the @end of the AppDelegate.m file add this:
+
+
+[Gist: AppDelegate.m](https://gist.github.com/4ce33926f972a283ad557685db4e3367)
+
+
+This completes the Auth setup and installation, you should now be able to run react-native run-ios and see a running application within a simulator. This may take a while and will confirm that the setup is complete if all goes well. We haven’t added any auth to the actual React app yet, so this is just to clarify that everything worked.
+
+
+### Adding Auth
+
+
+#### OAuth flow
+
+
+We have installed the package and set it all up, now we need to add Auth to the React app. We are going to keep this simple for now and just going to add a button which will run the authentication.
+
+
+[Gist: App.js](https://gist.github.com/31dea6f34633bc086865ccb0876cf378)
+
+
+In the above snippet, I’ve updated the generated App.js file which react-native creates by default. I’ve removed some of the initial text and added a login button. I’ve imported the auth package and created an _authorize method which will open the chosen auth providers login page.
+
+
+For the example above I have chosen Google. You will need to set up the [OAuth](https://developers.google.com/identity/protocols/OAuth2) credentials and add them to the clientId and redirectUrl once you have done this you should be able to reload the app and press the login button to be taken to the Google login screen! Yeah!!
+
+
+Thanks for reading. I’m no React expert so if you have anything I’ve done wrong or could be improved I’d appreciate any comments or messages!
+
+
+**[Mattchewone/react-native-oauth](https://github.com/Mattchewone/react-native-oauth)**

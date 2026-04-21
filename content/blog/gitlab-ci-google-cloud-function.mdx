@@ -1,0 +1,34 @@
+---
+title: "Gitlab CI Google Cloud Function"
+description: ""
+date: "2022-11-02T10:00:00.000Z"
+tags: ["Gitlab"]
+coverImage: "/content-images/gitlab-ci-google-cloud-function/cover.jpg"
+---
+
+Having a smooth deployment pipeline is every developer's dream to ensure that smooth they can concentrate on developing and pushing features and that they get deployed fast and with little friction. I am going to walk through how to make that happen with Google Cloud Functions / Google Cloud Run using Gitlab CI.
+
+
+First, you will need to create a service account that will have admin permission, I did this for both GoogleCloudFunction and GoogleCloudRun roles to future-proof the service account.
+
+
+
+The next part is allowing that service account access, I ran the following to grant it access to the main service account to perform necessary operations:
+
+
+`gcloud iam service-accounts add-iam-policy-binding <project_id>-compute@developer.gserviceaccount.com --member serviceAccount:<service_account>@<project_name>.iam.gserviceaccount.com --role roles/iam.serviceAccountUser`
+
+
+Once the service account is created, you will need to create an API key which is recommended to be in JSON. This will automatically be downloaded which you will need to use later.
+
+
+You can then go ahead and create the gitlab-ci.yml which will configure to create the deployment.
+
+
+[Gist: gitlab-ci.yml](https://gist.github.com/8dbdda25fc8cc5bb43332ee3543f2ce7)
+
+
+As you can see there are a couple variables we will need to set within the Gitlab CI settings, there are options to create a Gitlab secret as a File which we will use for the JSON service account API Key, we will create a normal variable for the Service Project.
+
+
+Once you have configured the CI secrets, you should be able to push your changes and see your code get deployed and you can enjoy smooth deployments!

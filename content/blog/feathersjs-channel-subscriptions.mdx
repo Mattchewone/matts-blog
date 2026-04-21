@@ -1,0 +1,57 @@
+---
+title: "FeathersJS Channel Subscriptions"
+description: ""
+date: "2019-02-12T11:38:41.762+00:00"
+tags: ["FeathersJS", "Javascript"]
+coverImage: "/content-images/feathersjs-channel-subscriptions/cover.jpg"
+---
+
+[FeathersJS](https://feathersjs.com/) Channels are a great way to handle real-time data. However, sometimes you might only want certain data on a certain page. For example, you may have a chatroom app which has multiple rooms and you only want to provide data for a room that a user is viewing.
+
+
+### On the server
+
+
+To be able to handle channels on the fly, I am going to configure a custom service which will handle joining and leaving channels.
+
+
+[Gist: subscription-service.class.js](https://gist.github.com/635286bc0bc92fbe1b1c23dcbd4b9e98)
+
+
+In the above snippet custom service class we use the create method to join the channel and the remove method to leave the channel.
+
+
+#### Service
+
+
+Now to configure the service to emit data to the channels, within the *-service.js file, we can configure a custom publish. This will emit data only to the channels which exist and will filter out the current user. So the user that created the message within the room, won’t get an .on('created')event when they create a new message, but all other subscribed users will get this.
+
+
+[Gist: service.js](https://gist.github.com/eb415c18790142f24659fc1c667fda03)
+
+
+Awesome! Now we are only emitting data to those that want it. Now let’s take a look at setting up the client.
+
+
+### The client
+
+
+For our discussion here, I am just going to show a brief example of where you would emit the subscribe/unsubscribe events.
+
+
+[Gist: message.component.js](https://gist.github.com/ef48d9a42bf4a451b0fa88c9908dbf91)
+
+
+The above example is of a CanJS component. We use connectedCallback which is a lifecycle hook called after the component’s element is inserted into the document. This can also return a function which will be used when the component is torn down / removed from the document.
+
+
+Within the connectedCallback we can emit the subscribe event, and in the teardown, we can emit the unsubscribe. When a user navigates to this component it will automatically subscribe the current user to the room, so all messages that are created with this roomId will be sent to this room channel.
+
+
+To see how this affects your app, if you open up the network tab in devtools, and select the ws sub-tab you will see in the frames section all the data transferred to and from your server.
+
+
+If the server was configured to publish to the authenticated channel which would be all logged in users. Every user would see created events for messages and rooms which they are not viewing. This means that the server is sending data to those that aren’t using it or require it, so we can prevent this by only sending data to those that are subscribed to specific channel.
+
+
+Thanks for reading!
