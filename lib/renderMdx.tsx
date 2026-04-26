@@ -4,24 +4,16 @@ import { compileMDX } from 'next-mdx-remote/rsc'
 import remarkGfm from 'remark-gfm'
 import { Highlight, themes } from 'prism-react-renderer'
 import GistEmbed from '../components/gist-embed'
+import { withBasePath } from './basePath'
 
 function linkClass() {
   return 'underline text-pink-100 hover:text-pink-100 visited:text-pink-400'
 }
 
-const basePath = process.env.NEXT_PUBLIC_BASE_PATH || ''
-
 function normalizeImgSrc(src: string, assetBase: string) {
   if (!src) return src
   if (/^https?:\/\//i.test(src) || src.startsWith('/')) return src
   return `${assetBase}/${src.replace(/^\.\//, '')}`.replace(/([^:]\/)\/+/g, '$1')
-}
-
-function withBasePath(url: string) {
-  if (!basePath) return url
-  if (!url.startsWith('/')) return url
-  if (url.startsWith(basePath + '/')) return url
-  return `${basePath}${url}`
 }
 
 function extractText(node: any): string {

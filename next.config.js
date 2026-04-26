@@ -1,4 +1,6 @@
-const basePath = process.env.NEXT_PUBLIC_BASE_PATH || ''
+// Next rejects basePath "/"; treat it like unset (root deploy).
+const raw = process.env.NEXT_PUBLIC_BASE_PATH || ''
+const basePath = raw === '/' ? '' : raw
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {

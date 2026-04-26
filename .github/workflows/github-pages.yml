@@ -27,8 +27,8 @@ jobs:
       - name: Build static site
         run: npm run build
         env:
-          NEXT_PUBLIC_BASE_PATH: /matts-blog
-          NEXT_PUBLIC_SITE_URL: https://mattchewone.github.io/matts-blog
+          # Root deploy (custom domain or Pages at /). Do not set NEXT_PUBLIC_BASE_PATH to "/" — Next rejects it.
+          NEXT_PUBLIC_SITE_URL: https://mattchaffe.uk
       - uses: actions/upload-pages-artifact@v3
         with:
           path: out

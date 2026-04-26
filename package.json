@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "scripts": {
     "build": "next build",
-    "dev": "NEXT_DISABLE_TURBOPACK=1 next dev",
+    "dev": "next dev",
     "fmt": "prettier --ignore-path .gitignore --write --cache .",
-    "start:web": "next start"
+    "start:web": "npx serve@latest out"
   },
   "prettier": {
     "semi": false,

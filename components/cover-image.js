@@ -1,8 +1,11 @@
 import cn from 'classnames'
 import Link from 'next/link'
+import { withBasePath } from '../lib/basePath'
 
 export default function CoverImage({ title, slug, coverImage }) {
   if (!coverImage) return null
+
+  const src = withBasePath(coverImage)
 
   const image = (
     <img
@@ -13,7 +16,7 @@ export default function CoverImage({ title, slug, coverImage }) {
       className={cn('shadow-small w-full h-full', {
         'hover:shadow-medium transition-shadow duration-200': slug,
       })}
-      src={coverImage}
+      src={src}
     />
   )
 

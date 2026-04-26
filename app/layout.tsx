@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Script from 'next/script'
 import { Inter } from 'next/font/google'
+import { withBasePath } from '../lib/basePath'
 import '../styles/index.css'
 
 const inter = Inter({ subsets: ['latin'], display: 'swap' })
@@ -9,7 +10,7 @@ export const metadata: Metadata = {
   title: 'Matt Chaffe',
   description:
     'A place for my thoughts, articles and anything else developer related.',
-  icons: [{ rel: 'icon', url: '/static/favicon.png' }],
+  icons: [{ rel: 'icon', url: withBasePath('/static/favicon.png') }],
 }
 
 export default function RootLayout({
