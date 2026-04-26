@@ -1,0 +1,120 @@
+---
+title: "Understanding GraphQL Resolvers"
+description: "An intro into GraphQL resolvers..."
+date: "2020-09-15T10:00:00.000+01:00"
+tags: ["Javascript"]
+coverImage: "/content-images/understanding-graphql-resolvers/cover.jpg"
+---
+
+Let's start by talking about what a resolver is. A GraphQL Resolver is a function that is responsible for populating the data for a single field in your schema. What does this mean? Let's try to break it down, here is some data first:
+
+
+```javascript
+// Data in memory 
+let person = {
+  name: 'Matt',
+  hobbies: [
+    { name: 'walking' },
+    { name: 'cycling' }
+  ]
+} 
+```
+
+
+We have a simple object which contains a name property and an array of hobbies. Given the following Schema and initial query resolver, we can see how these resolvers work.
+
+
+```javascript
+// GraphQL Schema
+type Query { person: Person } 
+type Person { name: String! hobbies: [Hobbies] } 
+type Hobbies { name: String! } 
+
+const resolvers = { 
+  Query: { 
+    person (parent, args, context) { 
+      return person 
+    }
+  }
+} 
+```
+
+
+We define the schema with the type keyword, Query being the main entry point for all our GraphQL queries. The Query has one property person which then references the Person definition, so we can now query for the "name" & "hobbies" properties. The return person within our resolver is the data that in our instance is in memory, but this could also be a database lookup or even an API request. Given the following query:
+
+
+```javascript
+query { person { name } } 
+// output 
+
+{ 
+  data: { 
+    person: { 
+      name: 'Matt' 
+    }
+  }
+} 
+```
+
+
+The entire data object will be loaded, but only what was requested which was the person.name will be returned.
+
+
+But say we wanted to do something extra for the hobbies property, we could do this within a resolver, for example, add an image URL. We would need to create a resolver for that property and it would look something like, which would be a specific resolver for the hobbies when queried within the person context:
+
+
+```javascript
+const resolvers = { 
+  Query: { 
+    person (parent, args, context) { 
+      return person 
+    }
+  },
+  Person: {
+    hobbies (parent, args, context) {
+      return person.hobbies.map(hobby => {
+        return {
+          ...hobby, 
+          url: `https://hobbies.com/${hobby.name}`
+        }
+      })
+    }
+  }
+} 
+```
+
+
+Don't forget to update the type definition for Hobbies:
+
+
+```javascript
+type Hobbies { name: String! url: String } 
+```
+
+
+We can also be more generic and have a resolver for the url property on the Hobbies definition, which would look something like:
+
+
+```javascript
+const resolvers = {
+  Query: {
+    person (parent, args, context) { 
+      return person
+    }
+  },
+  Hobbies: {
+    url (parent, args, context) { 
+      return `https://hobbies.com/${parent.name}`
+    }
+  }
+} 
+```
+
+
+This gives you the flexibility if you want to have the resolver for that property always do the same thing, or if you want it to do something more specific when fetched within a specific parent property context.
+
+
+You can have the two resolvers together but the top-level Hobbies one will resolve last and as such will take precedence.
+
+
+Thanks for reading!

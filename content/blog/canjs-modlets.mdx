@@ -1,0 +1,51 @@
+---
+title: "CanJS modlet pattern"
+description: ""
+date: "2018-10-17T20:37:53.772+01:00"
+tags: ["Javascript"]
+coverImage: "/content-images/canjs-modlets/cover.jpg"
+---
+
+I have recently started working at Bitovi which created and continually develop CanJS which is a modern Javascript framework. I have previously been using Vue for projects, so in my efforts in learning a new framework, I am making articles to aid in my learning and sharing what I learn.
+
+
+### Modlets and what are they?
+
+
+Well, you can think of modlets as modules, it’s simply an organized way to structure your files. Each folder is a modlet and will contain all the parts involved with using and testing that component. The default structure for a modlet is to contain:
+
+- ViewModel
+- Template
+- Tests
+- Styles
+- Demo page
+- Component documentation
+
+This is a bit different to how Vue projects tend to be structured, where components are either grouped by type within the components folder or all just placed at the root of the components folder.
+
+
+### Demo page
+
+
+Having a demo page and being able to develop a component in isolation has been extremely helpful when working on large projects with lots of components. The demo page allows you to mock any props for the component so you can pass data into the component as it would be when used in the app.
+
+
+You are able to interact with and use the component to ensure everything is working as you expect it to. Running the demo page is as simple as starting a http-server and loading the components .html file.
+
+
+The [DoneJS](https://donejs.com/) cli allows you to scaffold an app quickly and can be used to create the component in the modlet pattern.
+
+
+### Examples
+
+
+I have put together a very basic CanJS app which you can see here:
+
+
+**[Mattchewone/canjs-demo](https://github.com/Mattchewone/canjs-demo)**
+
+
+**[CanJS 5.0](https://www.bitovi.com/blog/canjs-5)**
+
+
+Thanks for reading!

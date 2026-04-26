@@ -1,0 +1,47 @@
+---
+title: "Socket Fixtures Debugging"
+description: ""
+date: "2019-05-22T21:00:00.000+01:00"
+tags: ["Javascript"]
+coverImage: "/content-images/socket-fixtures-debugging/cover.jpg"
+---
+
+Recently I was upgrading a project to use the latest versions of feathersjs client packages, which was a relatively easy and straightforward upgrade. The project is written with canjs and we have been using can-fixture-socket to mock socket requests and return mocked data from can-fixture. I noticed after the upgrade that about 30% of my tests were now failing, specifically the tests which had been making server requests The error was a socket timeout. The app was working as I had manually tested the functionality of the app, so this was only an issue with the tests.
+
+
+This got me head scratching; I reverted the upgrade and the tests were passing as expected. I then started to look to see if I had a package mismatch and perhaps feathersjs was using a different version of socket-client.io compared to what can-fixture-socket was using.
+
+
+I created a demo app, which just had feathersjs and can-fixture-socket but I was getting the same issue, a socket timeout. Opening up the debugger in Chrome and stepping through can-fixture-socket, I could see that it was emitting the event, and after spending a while stepping through the internals I decided a break was needed.
+
+
+Refreshed and raring to go again, I thought I'd try one more attempt figuring out what was going on. I added a simple event handler for an event:
+
+
+```javascript
+mockServer.on('messages::find', data => {
+    console.log('messages::find', {
+        data
+    })
+})
+```
+
+
+This time I could see the handler being added to the array of listeners as I was stepping through. I saw the find event fire, but still, no console.log message! I was deep in the rabbit hole (no breaks), and it took me way too long to notice that the issue was the name of the event that was being emitted. As such, when checking the handler for this event, it would not find one registered with this eventName. Legacy feathersjs would namespace the eventNames as messages::find, but in the latest release they have changed this so the name of the event is the method, ie find and the serviceName is now passed in as an argument to the emitted data.
+
+
+This is an example of what feathersjs is emitting:
+
+
+```javascript
+connection.emit(['find', 'messages', {}, {}]) 
+```
+
+
+Because of this I made a fix to can-fixture-socket to be able to handle this newer format, if you are using the latest version of feathersjs and would like to make use of mocking the socket connection I'd recommend looking into can-fixture-socket especially now as it will work for the newer format of feathersjs!
+
+
+A quick take away from this for me is to take regular breaks and to get a second pair of eyes on the issue if you have been stuck on the same issue for too long. After spotting the issue I feel that may have been picked up more quickly if I had someone else looking over it with me.
+
+
+Thanks for reading!

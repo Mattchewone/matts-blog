@@ -1,0 +1,39 @@
+---
+title: "FeathersJS Customise Local Auth Strategy"
+description: ""
+date: "2020-02-19T09:00:00.000+00:00"
+tags: ["Javascript"]
+coverImage: "/content-images/feathersjs-customise-local-auth-strategy/cover.jpg"
+---
+
+I often see people in the [FeathersJS community](http://slack.feathersjs.com/) asking how they can customize the LocalAuth to implement some additional user verifications and throw their errors. I thought I would walk through how easy it is in v4 to do this by extending the [LocalStrategy](https://docs.feathersjs.com/api/authentication/local.html). The LocalStrategy refers to the auth strategy which is used for a username/email & password authentication, as opposed to JWT or OAuth.
+
+
+By default, the LocalStrategy will verify the username/email and password combination. It will throw an error if the password and username/email combination do not match. But sometimes you may want to do more than verify the username/email & password.
+
+
+As the [documentation](https://docs.feathersjs.com/api/authentication/local.html#customization) shows, you can customize how the user is looked up so that you can restrict to only active users:
+
+
+[Gist: local-get-entity.js](https://gist.github.com/a4f898f0e0f6dbe27bbe54a0f186c6f9)
+
+
+In the above snippet, we can see that to create our custom strategy we extend the LocalStrategy and overwrite the getEntityQuery which is used to do the email lookup. This should either return a valid user which will then be used to compare passwords or return no users which will by default throw a NotAuthenticated error. You can change the message of the error by configuration which can be found [here](https://docs.feathersjs.com/api/authentication/local.html#configuration).
+
+
+To extend it even further, we might want to throw a different error or a custom error then we can do the following:
+
+
+[Gist: authentication.js](https://gist.github.com/a4f898f0e0f6dbe27bbe54a0f186c6f9)
+
+
+What we can do is extend the findEntity method. We will need to call the super.findEntity so that we can use the existing implementation of fetching the user. Then we can check the user that is returned to see whether they are in support of coffee.
+
+
+Both of the above methods can be used in combination together also!
+
+
+[Gist: combined-auth.js](https://gist.github.com/a4f898f0e0f6dbe27bbe54a0f186c6f9)
+
+
+Thanks for reading!

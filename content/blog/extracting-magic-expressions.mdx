@@ -1,0 +1,80 @@
+---
+title: "Extracting Magic Expressions"
+description: ""
+date: "2020-05-13T13:00:00.000+01:00"
+tags: ["Javascript"]
+coverImage: "/content-images/extracting-magic-expressions/cover.jpg"
+---
+
+This is the second part of my readable code series!
+
+
+Previously we went through how to not use Magic Numbers to make our code more readable and also help improve future maintenance of our code. In this article we are going to discuss how to extract Magic Expressions.
+
+
+## What is a Magic Expression
+
+
+You might well be asking what is a Magic Expression? Rightly so, I don't think this is a technical term for this but I'm going with it. The following is an example of this (a picture explains a thousand words, I don't have a picture so a code snippet will suffice):
+
+
+```javascript
+const juniorAge = 18
+const requiredHobbiesLength = 1
+const user = {
+    name: 'Jane',
+    age: 30,
+    hobbies: [{
+        name: 'Tennis'
+    }]
+}
+if (user.age >= juniorAge && user.hobbies.length >= requiredHobbiesLength) { // Do something... } 
+```
+
+
+The above highlight line shows the expression which I deem to be "Magic"...
+
+
+Ok well you got me, it's not really "Magic", but it does make for harder reading when you have lots of expressions, this is especially more difficult to read when they become multiline.
+
+
+## How to make these less magical
+
+
+To make these expressions easier to read and to help future you, I would highly recommend that you extract these into well named variables. Let's continue with an example:
+
+
+```javascript
+const juniorAge = 18
+const requiredHobbiesLength = 1
+const user = {
+    name: 'Jane',
+    age: 30,
+    hobbies: [{
+        name: 'Tennis'
+    }]
+}
+const isUserAboveJuniorAge = user.age >= juniorAge
+const isUserAboveHobbiesRequired = user.hobbies.length >= requiredHobbiesLength
+if (isUserAboveJuniorAge && isUserAboveHobbiesRequired) {
+  // Do something...
+} 
+```
+
+
+This is starting to look much better, the variable names help when scanning the code you can clearly see what is being checked and what is required for the if statement to be executed. But we could go even further:
+
+
+```javascript
+...
+const isUserAboveJuniorAge = user.age >= juniorAge
+const isUserAboveHobbiesRequired = user.hobbies.length >= requiredHobbiesLength
+const isAgeAndHobbieSuitable = isUserAboveJuniorAge && isUserAboveHobbiesRequired
+if (isAgeAndHobbieSuitable) { // Do something... } 
+```
+
+
+Now we have a very readable codebase which almost self documents itself, I say almost I would still recommend you document your code!
+
+
+Thanks for reading!

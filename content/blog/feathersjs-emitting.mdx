@@ -1,0 +1,42 @@
+---
+title: "FeathersJS Emitting"
+description: ""
+date: "2019-02-25T15:20:14.899+00:00"
+tags: ["Javascript"]
+coverImage: "/content-images/feathersjs-emitting/cover.jpg"
+---
+
+FeathersJS makes it really easy to write realtime web API’s. I want to talk about how you can emit data from your hooks. I had an application which had two services groups and group-access , a user could only fetch items from groups if they had a record in the group-access collection.
+
+
+But what this meant was when a user was granted access via the group-access service they would have to reload the page in order to re-fetch groups to reflect the new access.
+
+
+[Gist: hooks.js](https://gist.github.com/467eaca2190fbcc3fce743889be1b1c4)
+
+
+The above snippet is for an [after create hook](https://docs.feathersjs.com/api/hooks.html#registering-hooks), this would be for the group-
+
+
+access service. When a new group-access record is created this hook will run and will load the group via a get, so we can emit this record. We then emit on the groups service and use the created event name. We clone the context and add some additional params so that we can use these within the groups publish function.
+
+
+> Be sure to update the path so that it will emit using that path / service name.
+
+
+[Gist: service.js](https://gist.github.com/c3ae7b57b6b928a982dcd29f02bbdccd)
+
+
+In the above publish snippet, we are only going to publish realtime data if we have come from an internal emit, we can verify this by checking the property we added to the context in the emit call. In a real app you would probably be emitting based on some other checks.
+
+
+What this will do is filter all the channels to only that of context.userId which was passed in by the custom emit. It will send that data to the channel.
+
+
+If you are using something like can-connect-feathers or feathers-vuex when a realtime created event happens the created item will be added to the list of groups and should be displayed automagically.
+
+
+This should be done the same for the removed event, so when a groups-access record is deleted, as such revoking the user access. We can emit a removed event, which if configured the client will be listening for, thus removing the record from the list.
+
+
+Thanks for reading!

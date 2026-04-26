@@ -1,6 +1,6 @@
 import ArticlePreview from './article-preview'
 
-export default function MoreArticles({ title = "Popular Stories", articles }) {
+export default function MoreArticles({ title = 'Popular Stories', articles }) {
   return (
     <section className="max-w-6xl mx-auto pt-8">
       <h2 className="mb-8 text-6xl md:text-7xl font-bold capitalize tracking-tighter leading-tight">
@@ -13,7 +13,7 @@ export default function MoreArticles({ title = "Popular Stories", articles }) {
             title={article.title}
             coverImage={article.coverImage}
             date={article.date}
-            author={article.author}
+            excerpt={article.excerpt}
             slug={article.slug}
           />
         ))}

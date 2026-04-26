@@ -1,0 +1,113 @@
+---
+title: "ES6 Tips & Tricks"
+description: ""
+date: "2020-02-21T09:00:00.000+00:00"
+tags: ["Javascript"]
+coverImage: "/content-images/es6-tips-and-tricks/cover.jpg"
+---
+
+I wanted to put together a few useful tips & tricks that I find handy, mostly for me as a resource to look back at when I inevitably forget. I am not going to write about all the ES6 features as most of them are pretty well known, this is more of a handy resource for a few things I find useful.
+
+
+# Optional Object Properties
+
+
+This is one I use fairly often as I find it a neat way to add conditionally properties to an object without lots of if statements.
+
+
+```javascript
+const hobbies = ['hiking']
+const address = null
+const hasHobbies = hobbies.length > 0
+const person = {
+  name: 'Matt',
+  age: 30,
+  // Add this if there are hobbies 
+  ...(hasHobbies && { hobbies }),
+  // Add address if exists, otherwise use a default 
+  ...(address ? { address } : { address: defaultAddress })
+}
+```
+
+
+I think having all the potential properties around an object at the place of the definition of the object makes it easier at a glance to know what that object contains. Whereas the following I think is less glanceable:
+
+
+```javascript
+const hobbies = ['hiking']
+const address = null
+const person = {
+    name: 'Matt',
+    age: 30
+}
+if (hobbies.length > 0) {
+    person.hobbies = hobbies
+}
+if (address) {
+    person.address = address
+} else {
+    person.address = defaultAddress
+}
+```
+
+
+# Object Spread Property Removal
+
+
+This is a nice way to discard a property from an object, create a helper function that you can pass an object and which property you wish to remove and it will return the result. This makes use of the [Spread Syntax](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax).
+
+
+```javascript
+const person = {
+    fname: 'Matt',
+    lname: 'Chaffe',
+    age: 30
+}
+
+function removePropertyFromObject(obj, propertyName) {
+    const {
+        [propertyName]: discard, ...remainingProperties
+    } = obj
+    return remainingProperties
+}
+removePropertyFromObject(person, 'age') //-> { fname: 'Matt', lname: 'Chaffe' } 
+```
+
+
+# Array Concatenation
+
+
+A way to concatenate arrays making use of the [Spread Syntax](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax), to empty the array being spread into the new array being created.
+
+
+```javascript
+const array1 = [1, 2, 3]
+const array2 = [4, 5, 6]
+const result = [...array1, ...array2] //-> [1, 2, 3, 4, 5, 6] 
+```
+
+
+# Template Literals
+
+
+This is pretty commonly used, but I wanted to share it regardless because I think it's a really concise way to concatenate strings.
+
+
+```javascript
+const firstName = 'Matt'
+const lastName = 'Chaffe'
+const fullName = `${firstName} ${lastName}` // Matt Chaffe 
+```
+
+
+Over the more traditional way of string concatenation:
+
+
+```javascript
+const firstName = 'Matt' const lastName = 'Chaffe' const fullName = firstName + ' ' + lastName // Matt Chaffe const firstName = 'Matt'
+const lastName = 'Chaffe'
+const fullName = firstName + ' ' + lastName // Matt Chaffe 
+```
+
+
+Thanks for reading!

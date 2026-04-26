@@ -2,46 +2,42 @@
   "name": "matts-blog",
   "version": "1.0.0",
   "scripts": {
-    "build": "npm run build:sanity && npm run build:web",
-    "build:sanity": "npm --prefix studio run build",
-    "build:web": "next build",
-    "dev": "next",
+    "build": "next build",
+    "dev": "next dev",
     "fmt": "prettier --ignore-path .gitignore --write --cache .",
-    "postinstall": "(cd studio && npx @sanity/cli install)",
-    "start:sanity": "npm --prefix studio run start",
-    "start:web": "next start"
+    "start:web": "npx serve@latest out"
   },
   "prettier": {
     "semi": false,
     "singleQuote": true
   },
   "dependencies": {
-    "@portabletext/react": "^1.0.6",
-    "@sanity/client": "^3.4.1",
-    "@sanity/image-url": "^1.0.1",
+    "cheerio": "^1.0.0-rc.12",
     "classnames": "^2.3.2",
     "date-fns": "^2.29.3",
-    "next": "^12.3.1",
-    "next-sanity": "^0.8.4",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-hook-form": "^7.36.1",
-    "@sanity/block-content-to-react": "^2.0.7",
-    "prism-react-renderer": "^1.2.1",
-    "react-gist": "^1.2.4",
-    "swr": "^0.5.5"
+    "gray-matter": "^4.0.3",
+    "next": "^16.2.4",
+    "next-mdx-remote": "^6.0.0",
+    "prism-react-renderer": "^2.4.1",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "remark-gfm": "^4.0.1",
+    "turndown": "^7.2.4"
   },
   "devDependencies": {
-    "@sanity/cli": "^2.34.0",
+    "@fullhuman/postcss-purgecss": "^4.0.3",
+    "@tailwindcss/typography": "^0.5.7",
+    "@types/node": "^24.3.0",
+    "@types/react": "^19.1.12",
+    "@types/react-dom": "^19.1.9",
     "autoprefixer": "^10.4.12",
+    "cssnano": "^5.0.12",
     "postcss": "^8.4.17",
+    "postcss-preset-env": "^6.7.0",
     "prettier": "^2.7.1",
     "prettier-plugin-packagejson": "^2.3.0",
     "prettier-plugin-tailwindcss": "^0.1.13",
     "tailwindcss": "^3.1.8",
-    "@fullhuman/postcss-purgecss": "^4.0.3",
-    "@tailwindcss/typography": "^0.5.7",
-    "cssnano": "^5.0.12",
-    "postcss-preset-env": "^6.7.0"
+    "typescript": "^5.9.2"
   }
 }

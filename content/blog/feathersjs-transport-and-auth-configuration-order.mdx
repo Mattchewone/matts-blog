@@ -1,0 +1,69 @@
+---
+title: "FeathersJS Transport & Auth Configuration Order"
+description: ""
+date: "2020-02-04T09:00:00.000+00:00"
+tags: []
+coverImage: "/content-images/feathersjs-transport-and-auth-configuration-order/cover.jpg"
+---
+
+> Related to Version 3 of FeathersJS
+
+
+I was working on a project which was using the [feathers-client](https://docs.feathersjs.com/api/client.html) with SocketIO transport and we were switching to using REST transport. The project was using Nuxt and the authentication was being done on the client / browser so it was not doing any authentication during the Server Side Rendering (SSR). When I switched to using the REST transport I noticed that auth was no longer working, all the non-auth services were working but the services that required auth were throwing not-authenticated errors.
+
+
+It took me a little while to realise what was going on. I had to dig through the source code a little to find out why auth was not working. This was the setup that I had for the feathers-client.js file:
+
+
+```javascript
+const feathers = require('@feathersjs/feathers')
+const rest = require('@feathersjs/rest-client')
+const auth = require('@feathersjs/authentication-client')
+const fetch = require('node-fetch')
+const restClient = rest('https://my-server.com')
+
+module.exports = feathers().configure(auth()).configure(restClient.fetch(fetch))
+```
+
+
+> Can you see from that what might cause auth to not work?
+
+
+It took me a little while too, turns out the order of the auth and transport configurations matters.
+
+
+When the authentication client is set up there is a hook which populates the header and it depends on the the transport already having been configured. This doesn't matter for the Socket transport, it's only an issue for REST as this requires the token to be added to the headers so that the REST library can add this to the request.
+
+
+```javascript
+if (app.rest && accessToken) {
+    const {
+        scheme,
+        header
+    } = authentication.options;
+    const authHeader = `${scheme} ${accessToken}`;
+    context.params.headers = Object.assign({}, {
+        [header]: authHeader
+    }, context.params.headers);
+}
+```
+
+
+[Source](https://github.com/feathersjs/feathers/blob/master/packages/authentication-client/src/hooks/populate-header.ts#L9-L16)
+
+
+To ensure that auth works for REST, add the REST configuration before the auth module:
+
+
+```javascript
+const feathers = require('@feathersjs/feathers')
+const rest = require('@feathersjs/rest-client')
+const auth = require('@feathersjs/authentication-client')
+const fetch = require('node-fetch')
+const restClient = rest('https://my-server.com')
+
+module.exports = feathers().configure(restClient.fetch(fetch)).configure(auth())
+```
+
+
+Thanks for reading!

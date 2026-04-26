@@ -1,0 +1,45 @@
+---
+title: "Gitlab SSH Deployment"
+description: ""
+date: "2020-01-15T09:00:00.000+00:00"
+tags: []
+coverImage: "/content-images/gitlab-ssh-deployment/cover.jpg"
+---
+
+This has been a draft for quite a few months as I have been pretty busy with home life and work life. So finally getting around to sitting down and finishing this up to share. Although I have titled this for Gitlab the same principles apply for Github / Travis.
+
+
+I've written an article previously on how to deploy to Heroku but this article is for those that are deploying to servers like an EC2 instance for example. Not everyone is deploying to the new hotness of things like [zeit now](https://zeit.co/home) or [netlify](https://www.netlify.com/). I was working on a client that was using EC2 instances and I was getting a fed up with having to do manual deploys after each merge, so spent a bit of extra time setting this up so that I could merge and have the code deployed saving me some time in the long run.
+
+
+## Configuring the SSH keys
+
+
+To start I read the [docs](https://docs.gitlab.com/ee/ci/ssh_keys/) for configuring the CI container to have access to an SSH key. The documentation explains how you either create a new SSH key pair, or you can use an existing pair and inject this into the build environment.
+
+
+The SSH public key should be added to Gitlab's environment [secrets](https://gitlab.com/help/ci/variables/README#secret-variables), I have called it SSH_KEY but you may call it whatever you like as long as you ensure the same name is used within the script.
+
+
+Below is a .gitlab-ci.yml file that I have for reference on how it should look, I will go through a few of the steps explaining in a little more detail.
+
+
+[Gist: .gitlab-ci.yml](https://gist.github.com/e422658134f87c6e43d55baa258c14f1)
+
+
+First up we configure a before_script that will ensure that we have ssh and git installed.
+
+
+On line 13 - eval $(ssh-agent -s) we are starting an ssh-agent session, which we will then add our SSH key to on line 14. We then need to add and verify the ssh_known_hosts with ssh-keyscan, you will need to update with the address of the server you are connecting to and ensure the directory has the correct permissions which are 644.
+
+
+## The deploy
+
+
+Now we have a way to login to the server securely we are free to do a deploy to the server. This can be configured however you like, for example, it could just run a script on the server that does some git logic to pull and restart the build or you might want to SCP over any built artifacts from Gitlab to the server.
+
+
+In my example, I am simply logging into the remote server and doing a git pull, but you might need to also restart the service.
+
+
+Thanks for reading!

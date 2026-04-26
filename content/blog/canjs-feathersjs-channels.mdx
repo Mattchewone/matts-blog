@@ -1,0 +1,114 @@
+---
+title: "CanJS & FeathersJS Channels"
+description: ""
+date: "2018-12-18T14:59:44.067+00:00"
+tags: ["FeathersJS"]
+coverImage: "/content-images/canjs-feathersjs-channels/cover.jpg"
+---
+
+I recently wrote an article about how to use FeathersJS’s channels to ensure the right realtime data goes to the correct user(s). I want to show how to do the same realtime fun but using [CanJS](https://canjs.com/).
+
+
+I’ll refer to this article on how to setup the FeatherJS channels:
+
+
+**[FeathersJS, Channels & Vuex](https://blog.feathersjs.com/feathersjs-channels-vuex-7548fb5c5d2c)**
+
+
+### Getting setup with CanJS
+
+
+I cloned this [repo](https://github.com/canjs/stealjs-example) to get started.
+
+
+Let’s start at setting up the models so we can load the data and get the realtime goodness. We will first need to create a feathersConnection which is a set of custom can-connect behaviours.
+
+
+[Gist: feathers-connection.js](https://gist.github.com/a8ce5fae0d342aedcf91c0117246423a)
+
+
+The above will be used for models to fetch data and keep the model up to date with realtime data. This will also handle combining multiple requests into a single request and a few other cool things.
+
+
+There is a similar one needed for authentication
+
+
+[Gist: feathers-authentication.js](https://gist.github.com/d62b3f9c47309051b9466de5d52626d1)
+
+
+This will handle logging in and getting a user object once logged in.
+
+
+#### Models
+
+
+The user model we can setup using the above feathers-connection like so:
+
+Here’s the referenced gist:
+
+[Gist: user-model.js](https://gist.github.com/602bfb5e642c36896516abd5f745b24f)
+
+
+[Gist: user-model.js](https://gist.github.com/602bfb5e642c36896516abd5f745b24f)
+
+
+We define the properties on L6-L13 and on L15 we create a reactive list with each list item being an instance of User. The list itself has some computed properties, so we can get usersById and usersByEmail.
+
+
+On L34-L41 we setup the connection details for this model which tells it how to get data. We pass it the feathers-service we want it to use to fetch data.
+
+
+The session / authentication model is similar but it uses feathers-authentication to create the connection:
+
+
+[Gist: session-model.js](https://gist.github.com/f991a6bcba93bb4870b2afd9355da2ff)
+
+
+We create a userPromise async getter, which will load the user if the userId exists, this will allow us within the user prop to load in a user, which will be an instance of the User model we defined earlier.
+
+
+Finally we create a message model which will handle loading in message data.
+
+
+[Gist: messages-model.js](https://gist.github.com/edc7ee41470d3b700c6be2fc85f17bed)
+
+
+We are using [can-query-logic](https://canjs.com/doc/can-query-logic.html) along with feathers-query-logic to handle converting feathers queries into a query format that can-connect can use to query data.
+
+
+### Getting the data
+
+
+So far we have discussed getting the models setup so we can load in data, let’s see how that’s done within a component.
+
+
+[Gist: message-list--vm.js](https://gist.github.com/498d06e2679baaf4cc9c698a32fc2697)
+
+
+The above is the ViewModel for the MessageList component. We create a usersPromise and a messagesPromise which will load in the initial messages and users for the page load. We need the users so we can map the email within the message to the users name.
+
+
+We create a getter which will Promise.all both queries so we can load them both before rendering the list of messages. Using the connectedCallback lifecycle method of the ViewModel we create a listenTo event listener, which will fire once a property changes. Once the current user is present on the ViewModel we can then load the initial data.
+
+
+Now that we have the initial data loaded, we can render this within the template. When we create new data or retrieve new data via sockets the Message model’s list will automatically be updated, and the data will update within the template!
+
+
+#### Creating new messages
+
+
+We can call `new Message({ ...data })` to create a new instance, and calling `.save()` will send this to the server and update our Message.List. As this is a promise, we can `.then()` to reset the input bindings so the form is clear for another message.
+
+
+```js
+new Message({ to: this.to, message: this.msg }) .save() .then(() => { this.to = '' this.msg = '' }) 
+```
+
+
+You can see the full repo here:
+
+
+**[Mattchewone/realtime-canjs](https://github.com/Mattchewone/realtime-canjs)**
+
+
+Thanks for reading!

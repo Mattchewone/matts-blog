@@ -1,0 +1,78 @@
+---
+title: "Vue Authentication with FeathersJS"
+description: ""
+date: "2018-06-15T11:35:04.577+01:00"
+tags: ["Javascript", "Vue"]
+coverImage: "/content-images/vue-authentication-with-feathersjs/cover.jpg"
+---
+
+### FeathersJS Authentication
+
+
+Authenticating against a [FeathersJS](https://feathersjs.com/) server is pretty simple, I am going to use the local strategy which is by default email/password based as my examples. In order to authenticate against a typical setup you would via rest post to /authenticate which will give you an accessToken as a response which you can add to your http Authorization header if you are doing a standard REST request.
+
+
+```javascript
+{
+    "strategy": "local",
+    "email": "user@local.dev",
+    "password": "1234"
+}
+```
+
+
+There is a however a client library for FeathersJS which will help with connecting to a FeathersJS API and you can use it like:
+
+
+[Gist: feathers-client.js](https://gist.github.com/fa4152f6e8240dfcdd2a04d4b6905d2b)
+
+
+### Vue & Vuex
+
+
+Right now lets talk about using FeathersJS services within Vuex I will be using [feathers-vuex](https://feathers-plus.github.io/v1/feathers-vuex/index.html) to match up Vuex and FeathersJS. Similar setup to my previous [article](https://medium.com/@mattchewone/feathersjs-nuxt-ssr-authentication-75e97b6ce125) except we will need to authenticate on the client. Let me show you first how to add the FeathersJS services to Vuex
+
+
+[Gist: store.js](https://gist.github.com/61f2150704707c1df9e7353dbd86a8e2)
+
+
+We pull in the feathers-client which defines the setup to the FeathersJS API, and we can then add each service which will add a namespaced module to Vuex. A very simple look at a basic component which will fetch data from the API and will read from the store using a reactive getter:
+
+
+[Gist: Movie.vue](https://gist.github.com/07c512a86fba3ff7b1b0529e533fb655)
+
+
+Use a mapActions namespace, and then pull in the action I wish to use, so here I am using the find action so I can lookup data from the API. I call this within the created lifecycle hook so the store is populated with data from that query. The mapGetters then pulls in data using the same query used to get the data from the API and if you have setup events/channels within your FeathersJS API will get updated when events are fired.
+
+
+### Authentication
+
+
+I realise I have gone off topic a little, so let’s get back on track with **Authentication**. When calling using the FeathersJS client libraries, if setup with LocalStorage it will automatically store the token from the authenticate request, this means that upon a browser refresh if you call authenticate without any params it will use the token from the LocalStorage and if valid you will be authenticated.
+
+
+[Gist: main.js](https://gist.github.com/23ad22d0614ba80dd4129985cb056267)
+
+
+Here I try to authenticate using the LocalStorage token, and ignore if it fails, this will populate the payload within the auth module of the store. I run the authenticate before I initiate the Vue app so that any subsequent requests within components are authenticated (should the initial authentication request return successful).
+
+
+I also setup a beforeEach on the router to check whether we have a valid user in the store and if the route requires authentication. Here is how I would setup some basic navigation to show links to logged in users and non-logged in users
+
+
+[Gist: App.vue](https://gist.github.com/b1386fbe0d76be1ed18a2e5a8befcd8f)
+
+
+I use a computed property to map to the user within the auth module of Vuex so that if a user is logged in or logs out this will update the navigation without having to handle watching any changes.
+
+
+**[Mattchewone/feathersjs-vuex-demo-ui](https://github.com/Mattchewone/feathersjs-vuex-demo-ui)**
+
+
+**[Mattchewone/feathersjs-vuex-demo-api](https://github.com/Mattchewone/feathersjs-vuex-demo-api)**
+
+
+This is a work in progress, so if you notice anything wrong or even better any improvements then please let me know! :)
+
+
+Enjoy!

@@ -1,0 +1,59 @@
+---
+title: "Magic Numbers"
+description: ""
+date: "2020-04-30T13:00:00.000+01:00"
+tags: ["Javascript"]
+coverImage: "/content-images/magic-numbers/cover.jpg"
+---
+
+> This is part of a series of short posts on improving code readability
+
+
+In this short post I want to discuss the use of Magic Numbers, what they are, and how not using them can make reading code a little easier!
+
+
+First up, what is a Magic Number you might be asking? It's usually a number that's used directly and not stored within a variable.
+
+
+A simple contrived example of this would be:
+
+
+```javascript
+const users = [{
+    name: 'Matt',
+    age: 30
+}, {
+    name: 'Austin',
+    age: 20
+}].filter(user => user.age >= 21)
+```
+
+
+This doesn't look so bad, but say this 21 number is used in many places, and in future needs to be updated you would need to find all the places to update in multiple files. Having this stored as variable/constant and imported where needed makes updating much easier. It also has improved readability because the name of the variable should provide some context on what the number means.
+
+
+This could be re-written like:
+
+
+```javascript
+const {
+    isOverDrinkingAge
+} = require('./constants')
+
+const users = [{
+    name: 'Matt',
+    age: 30
+}, {
+    name: 'Austin',
+    age: 20
+}].filter(user => user.age >= isOverDrinkingAge)
+```
+
+
+Looking at this now, you can see that the user's array will now only contain users over the drinking age.
+
+
+To help with this for consistency within your project I would recommend using something like [eslint](https://eslint.org/docs/rules/no-magic-numbers), ensuring you have the no-magic-numbers rule enabled.
+
+
+Thanks for reading!

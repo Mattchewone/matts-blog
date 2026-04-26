@@ -1,0 +1,138 @@
+---
+title: "JSCodeshift and ASTs"
+description: ""
+date: "2019-07-16T10:00:00.000+01:00"
+tags: ["Javascript"]
+coverImage: "/content-images/jscodeshift-and-asts/cover.jpg"
+---
+
+I have been working on some open-source tools for [CanJS](https://canjs.com). I am working on the migration tool which is used to help upgrade projects to the latest version. We use [jscodeshift](https://github.com/facebook/jscodeshift) to handle these migrations and this was my first time using them and writing them.
+
+
+jscodeshift allows you to create complex transformations that can read the source file and parse that into an [Abstract Syntax Tree (AST)](https://en.wikipedia.org/wiki/Abstract_syntax_tree). We can then manipulate it and regenerate the source code.
+
+
+## AST Explorer
+
+
+[AST Explorer](https://astexplorer.net/) has been an **extremely** useful tool in helping me understand AST's and I've been using it to create my transforms live in the browser. It was very helpful to me to see the transformations happening as I was writing the transformation.
+
+
+To enable the transforms within AST Explorer toggle the transform option within the top navigation bar. By turning this on you can select different types of transformations, as I am working with jscodeshift I use that option.
+
+
+## Examples
+
+
+Let's walk through a simple transformation that will transform [CanJS](https://canjs.com) Component into a StacheElement class.
+
+
+```javascript
+Component.extend({
+    tag: 'my-app',
+    view: `<h1>Hello World!</h1>`
+})
+```
+
+
+Will become
+
+
+```javascript
+class MyApp extends StacheElement {
+    static get view() {
+        return `<h1>Hello World!</h1>`
+    }
+}
+customElements.define('my-app', MyApp)
+```
+
+
+Here is a gist with the code used to do the transformation in its most basic form:
+
+
+[Gist: transform.js](https://gist.github.com/18b2b73caaf13db70a85d3e7bfb1008d)
+
+
+Let's try to break this down a little, passing jscodeshift the source file will generate the AST and we then call the .find method which allows us to traverse and find something specific within the tree. It will return a Collection which you can iterate through and modify.
+
+
+```javascript
+.find(j.CallExpression, {
+    callee: {
+        type: 'MemberExpression',
+        object: {
+            name: 'Component'
+        },
+        property: {
+            name: 'extend'
+        }
+    }
+})
+```
+
+
+In the above code, we are looking for a CallExpression which has a specific callee and we can specify the type and names of the callee, in this instance, we are looking for Component.extend.
+
+
+Once we have the results we can iterate over them and modify to our heart's content 😊.
+
+
+We know the type of result we are going to get and the shape of it, so we can iterate over the properties of the object enabling us to add these back after we have replaced the CallExpression with a Class declaration.
+
+
+We want to restore the view property and will add this to the class as a static getter property. Here we keep a reference to the view's path.
+
+
+```javascript
+path.value.arguments[0].properties.forEach(p => {
+    if (p.key.name === 'view') {
+        viewProp = p
+    }
+})
+```
+
+
+Now we can replace the CallExpression with a Class declaration:
+
+
+```javascript
+j(path).
+replaceWith(j.classDeclaration(
+    j.identifier(className),
+    j.classBody([
+        j.methodDefinition('get', j.identifier('view'),
+            j.functionExpression(null, [], j.blockStatement([j.returnStatement(viewProp.value)])), true)
+    ]), j.identifier('StacheElement')))
+```
+
+
+The first identifier is the name of the class, the second identifier is optional and it's for adding the name of the superClass. For the classBody we will just add what was previously the value of the view property on the CallExpression.
+
+
+Full working example can be seen [here](https://astexplorer.net/#/gist/ac4678db738fbe090bf90f5c4e143d6f/2febfc769e5a3feea737e0436a40595779e2db05).
+
+
+## Notes
+
+
+When you wish to create a Node, use the camelCase name, and when you wish to look up a Node use the PascalCase name. For example, if you wish to find a classDeclaration you would do:
+
+
+```javascript
+j(file.source) .find(j.ClassDeclaration) 
+```
+
+
+But if you wanted to create a class you would do:
+
+
+```javascript
+const classDeclaration = j.classDeclaration(...) 
+```
+
+
+Voilà we have a simple transform!!
+
+
+Thanks for following along and thanks for reading.

@@ -1,0 +1,92 @@
+---
+title: "FeathersJS, Channels & Vuex"
+description: ""
+date: "2018-12-07T00:15:57.902+00:00"
+tags: ["FeathersJS", "Vue"]
+coverImage: "/content-images/feathersjs-channels-vuex/cover.jpg"
+---
+
+I wanted to share a little demo app that I put together which shows the use of channels for filtering realtime data and seeing that data being updated live within your application using feathers-vuex.
+
+
+I have been using FeathersJS for a little while now, but I haven’t gotten round to using channels until now, and I think they are great and I wanted to share some of my learnings. This is a relatively basic walkthrough and I don’t cover any advanced usages but should be helpful to give you a starting point.
+
+
+What this short walk through will show is how you can send data to specific channel(s), so data is only being received by the correct user(s). We will also see how feathers-vuex will subscribe to the socket events and keep your data updated.
+
+
+### Setting up channels
+
+
+I will start with the default channels.js file that comes out of the box with FeathersJS
+
+
+Here I have added a userId channel that the user will join upon login. The app can then use this channel to publish data. By default as you can see on line #37 the app will publish all data to the authenticated channel, which is all logged in users.
+
+
+[Gist: messages.service.js](https://gist.github.com/70b46bcdb0a66de03740f0d6d478d9cb)
+
+
+In the above messages.service.js file we create a service.publish function to only publish data to the channel with the userId. So only the user who is being sent a message will receive the realtime socket data.
+
+
+### The Client
+
+
+Now we have the server setup with channels, let’s get the vue client ready. For this demo I am using a simple vue app setup using the @vue/cli, I then installed the following additional modules:
+
+
+```bash
+npm i vuex vue-router feathers-vuex @feathersjs/authentication-client @feathersjs/feathers @feathersjs/socketio-client socket.io-client 
+```
+
+
+I won’t go into too much detail about the routing and feathers-vuex setup, as I’ve touched on getting it setup here — [https://blog.feathersjs.com/vue-authentication-with-feathersjs-3b1bdc6f5898](https://blog.feathersjs.com/vue-authentication-with-feathersjs-3b1bdc6f5898)
+
+
+#### Getting the data
+
+
+Let’s talk about how we get the data from the server initially. We first need to load any data that the server already has so we can show any previous messages.
+
+
+[Gist: Message--actions.vue](https://gist.github.com/a3fb09fa0323468658a14f61b669af28)
+
+
+We use feathers-vuex find method that we alias to findMessages with this we can pass it a FeathersJS query and here we are wanting to only get messages that we have either received or sent. This will populate the data into the vuex store. We could access the data in a .then from findMessages and add the data to the component. But for this demo I am going to use feathers-vuexfind getter to read the data from the store.
+
+
+[Gist: Message--getters.vue](https://gist.github.com/cf6de6ca7b4c5329d57b8d52cd9da150)
+
+
+Similar to the find action, we are going to query the vuex store with a FeathersJS query. We create a messages computed prop which will query the store and contain the reactive data. When the service for messages receives an .on('created') or .on('updated') it will automatically update the vuex store, and because the store is reactive, provided the data that has been received matches the query we used in findMessagesInStore the data on page will be updated.
+
+
+#### Model instances
+
+
+feathers-vuex when setting up our service in the vuex store, creates a Model instance for use to be able to use to create new data and update / remove that data. I will use this method for creating messages:
+
+
+[Gist: Message--create.vue](https://gist.github.com/d39ddeae174c6652b93ce5170446b7df)
+
+
+When we setup feathers-vuex we used the FeathersVuexvue plugin, which gives us access to the global $FeathersVuex which has a Model name for each of our services, as my service was called messages I have access to Message.
+
+
+I can pass in the data I want to be saved and call .save and this will save the record and add that into the current store. FeathersJS will create the record and will publish the data in realtime to the user which we added in to of the data.
+
+
+You should be able to see this if you open two browsers for example Chrome and Firefox. If you login with UserA in Chrome and UserB in Firefox, you will be able to send messages between UserA and UserB. If you open a third browser for example Chrome in incognito mode and login with UserC you will see that UserC does not get any messages which have not been sent to this user directly.
+
+
+Here is the repo
+
+
+**[Mattchewone/realtime-vuex](https://github.com/Mattchewone/realtime-vuex)**
+
+
+CanJS & FeathersJS Channels
+
+
+Thanks for reading!
