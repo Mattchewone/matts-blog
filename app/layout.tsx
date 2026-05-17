@@ -6,11 +6,30 @@ import '../styles/index.css'
 
 const inter = Inter({ subsets: ['latin'], display: 'swap' })
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://mattchaffe.uk'
+
 export const metadata: Metadata = {
-  title: 'Matt Chaffe',
+  title: {
+    default: 'Matt Chaffe',
+    template: '%s | Matt Chaffe',
+  },
   description:
     'A place for my thoughts, articles and anything else developer related.',
+  metadataBase: new URL(siteUrl),
+  alternates: { canonical: siteUrl },
   icons: [{ rel: 'icon', url: withBasePath('/static/favicon.png') }],
+  openGraph: {
+    siteName: 'Matt Chaffe',
+    type: 'website',
+    url: siteUrl,
+    title: 'Matt Chaffe',
+    description: 'A place for my thoughts, articles and anything else developer related.',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Matt Chaffe',
+    description: 'A place for my thoughts, articles and anything else developer related.',
+  },
 }
 
 export default function RootLayout({
