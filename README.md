@@ -1,11 +1,10 @@
-# Matt’s blog
+# Matt's blog
 
-This is a **content-driven** personal blog built with **Next.js (App Router)** and **MDX**, deployed as a static export to **GitHub Pages**.
+A **content-driven** personal blog built with **Next.js (App Router)** and **MDX**, deployed as a static export to **GitHub Pages** at [mattchaffe.uk](https://mattchaffe.uk).
 
 ### Content
 
-- Posts live in `content/blog/*.mdx`.
-- Images downloaded during migration live in `public/content-images/`.
+Posts live in `content/blog/*.mdx`. Images live in `public/content-images/`.
 
 ### Local development
 
@@ -16,16 +15,10 @@ npm run dev
 
 ### Build (static export)
 
-GitHub Pages uses a base path, so locally you can mimic it like this:
+GitHub Pages deploys automatically on push to `main` via the workflow in `.github/workflows/github-pages.yml`. To mimic the production build locally:
 
 ```bash
-NEXT_PUBLIC_BASE_PATH=/matts-blog npm run build
+npm run build
 ```
 
-### One-time migration from `mattchaffe.uk`
-
-This fetches the current live posts and writes them as MDX in this repo:
-
-```bash
-node scripts/migrate-from-mattchaffe.mjs
-```
+The workflow sets `NEXT_PUBLIC_SITE_URL=https://mattchaffe.uk` and uploads the `out/` directory as the Pages artifact.

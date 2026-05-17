@@ -17,10 +17,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
-          node-version: '20'
+          node-version: '24'
           cache: npm
       - name: Install
         run: npm ci
@@ -29,7 +29,7 @@ jobs:
         env:
           # Root deploy (custom domain or Pages at /). Do not set NEXT_PUBLIC_BASE_PATH to "/" — Next rejects it.
           NEXT_PUBLIC_SITE_URL: https://mattchaffe.uk
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v4
         with:
           path: out
 

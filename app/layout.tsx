@@ -25,6 +25,12 @@ export default function RootLayout({
         <Script id="theme-init" strategy="beforeInteractive">
           {themeInit}
         </Script>
+        <Script
+          defer
+          src="https://cloud.umami.is/script.js"
+          data-website-id="d8b6b77c-abe2-4391-a067-fbd4103214bf"
+          strategy="afterInteractive"
+        />
       </head>
       <body
         className={`bg-primary dark:bg-primary-dark dark:text-white text-black ${inter.className}`}
